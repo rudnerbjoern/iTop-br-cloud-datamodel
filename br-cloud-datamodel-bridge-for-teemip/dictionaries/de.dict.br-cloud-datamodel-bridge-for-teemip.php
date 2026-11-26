@@ -17,4 +17,7 @@ Dict::Add('DE DE', 'German', 'Deutsch', [
 
     'Class:CloudNatGatewayPublicAddress/Attribute:ipaddress_id' => 'Hostadresse',
     'Class:CloudNatGatewayPublicAddress/Attribute:ipaddress_id+' => 'IP-Adresse in der Organisation des Gateways.',
+
+    'Class:CloudNetworkLoadBalancerListenerAddress/Attribute:ipaddress_id' => 'Host-Adresse',
+    'Class:CloudNetworkLoadBalancerBackendAddress/Attribute:ipaddress_id' => 'Host-Adresse',
 ]);

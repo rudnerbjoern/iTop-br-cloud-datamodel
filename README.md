@@ -1,8 +1,8 @@
 # Cloud data model for iTop
 
 This extension adds provider-neutral cloud inventory to iTop 3.3. It extends the
-native `Cloud` and defines `CloudLan` and `CloudNatGateway`. Provider extensions can depend on
-`br-cloud-datamodel/0.1.0` and add fields, sample data or collectors independently.
+native `Cloud` and defines `CloudLan`, `CloudNatGateway` and `CloudNetworkLoadBalancer`.
+Provider extensions can depend on `br-cloud-datamodel/0.2.0` and add fields, sample data or collectors independently.
 
 ## Installation
 
@@ -59,6 +59,19 @@ required `ipaddress_id` reference to an IP address in the gateway's
 organization. The address can occur once per gateway (public) or per LAN
 attachment (private). Each row's name shows the host. The assignment details
 provide the link to the TeemIP record when the bridge is installed.
+
+## Network load balancers
+
+Open a Cloud's **Network load balancers** tab to see its load balancers.
+Each load balancer identifies its **Listener LAN** and **Backend LAN** within
+that Cloud and lists the host addresses used on each side. The Cloud and
+provider resource ID identify the load balancer across renames.
+
+Each row represents a single host. Backend rows also hold the reported
+prefix length. For example, `10.20.0.7/24` is stored as host `10.20.0.7`
+with prefix length `24`. The base module stores the host literal, and the
+TeemIP bridge links to the customer organization's IP address object.
+Removing an assignment keeps the linked address in TeemIP.
 
 ## Development
 
