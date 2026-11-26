@@ -1,0 +1,190 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<itop_design version="3.3" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://rudnerbjoern.github.io/iTop-schema/3.3/itop_design.xsd">
+  <classes>
+    <class id="Cloud" _delta="must_exist">
+      <fields>
+        <field id="ip_objects_list" xsi:type="AttributeLinkedSetIndirect" _delta="define">
+          <linked_class>lnkCloudToIPObject</linked_class>
+          <ext_key_to_me>cloud_id</ext_key_to_me>
+          <ext_key_to_remote>ipobject_id</ext_key_to_remote>
+          <count_min>0</count_min>
+          <count_max>0</count_max>
+          <duplicates>false</duplicates>
+          <filter>SELECT IPObject WHERE id IN (SELECT IPBlock) OR id IN (SELECT IPSubnet)</filter>
+          <display_style>property</display_style>
+        </field>
+      </fields>
+      <presentation>
+        <details>
+          <items>
+            <item id="col:col1" _delta="must_exist">
+              <items>
+                <item id="fieldset:Cloud:Provider" _delta="must_exist">
+                  <items>
+                    <item id="ip_objects_list" _delta="define"><rank>20</rank></item>
+                  </items>
+                </item>
+              </items>
+            </item>
+          </items>
+        </details>
+      </presentation>
+    </class>
+    <class id="lnkCloudToIPObject" _delta="define">
+      <parent>cmdbAbstractObject</parent>
+      <properties>
+        <is_link>1</is_link>
+        <category>bizmodel</category>
+        <abstract>false</abstract>
+        <key_type>autoincrement</key_type>
+        <db_table>br_lnk_cloud_to_ipobject</db_table>
+        <db_key_field>id</db_key_field>
+        <db_final_class_field/>
+        <naming>
+          <attributes><attribute id="cloud_id"/><attribute id="ipobject_id"/></attributes>
+        </naming>
+        <reconciliation>
+          <attributes><attribute id="cloud_id"/><attribute id="ipobject_id"/></attributes>
+        </reconciliation>
+        <uniqueness_rules>
+          <rule id="no_duplicate">
+            <attributes><attribute id="cloud_id"/><attribute id="ipobject_id"/></attributes>
+            <is_blocking>true</is_blocking>
+          </rule>
+        </uniqueness_rules>
+      </properties>
+      <fields>
+        <field id="cloud_id" xsi:type="AttributeExternalKey">
+          <sql>cloud_id</sql>
+          <target_class>Cloud</target_class>
+          <is_null_allowed>false</is_null_allowed>
+          <on_target_delete>DEL_AUTO</on_target_delete>
+        </field>
+        <field id="ipobject_id" xsi:type="AttributeExternalKey">
+          <sql>ipobject_id</sql>
+          <target_class>IPObject</target_class>
+          <allow_target_creation>false</allow_target_creation>
+          <filter>SELECT IPObject WHERE id IN (SELECT IPBlock) OR id IN (SELECT IPSubnet)</filter>
+          <is_null_allowed>false</is_null_allowed>
+          <on_target_delete>DEL_AUTO</on_target_delete>
+        </field>
+        <field id="source_key" xsi:type="AttributeString">
+          <sql>source_key</sql>
+          <is_null_allowed>true</is_null_allowed>
+        </field>
+      </fields>
+      <methods/>
+      <presentation>
+        <details>
+          <items><item id="cloud_id"><rank>10</rank></item><item id="ipobject_id"><rank>20</rank></item></items>
+        </details>
+        <search>
+          <items><item id="cloud_id"><rank>10</rank></item><item id="ipobject_id"><rank>20</rank></item></items>
+        </search>
+        <list>
+          <items><item id="cloud_id"><rank>10</rank></item><item id="ipobject_id"><rank>20</rank></item></items>
+        </list>
+      </presentation>
+    </class>
+    <class id="CloudNatGatewayLanAddress" _delta="must_exist">
+      <properties>
+        <naming>
+          <attributes>
+            <attribute id="address" _delta="delete"/>
+            <attribute id="ipaddress_id_friendlyname" _delta="define"/>
+          </attributes>
+        </naming>
+        <reconciliation>
+          <attributes>
+            <attribute id="address" _delta="delete"/>
+            <attribute id="ipaddress_id" _delta="define"/>
+          </attributes>
+        </reconciliation>
+        <uniqueness_rules>
+          <rule id="host_on_attachment" _delta="must_exist">
+            <attributes>
+              <attribute id="address" _delta="delete"/>
+              <attribute id="ipaddress_id" _delta="define"/>
+            </attributes>
+          </rule>
+        </uniqueness_rules>
+      </properties>
+      <fields>
+        <field id="address" xsi:type="AttributeString" _delta="delete"/>
+        <field id="ipaddress_id" xsi:type="AttributeExternalKey" _delta="define">
+          <sql>ipaddress_id</sql>
+          <target_class>IPAddress</target_class>
+          <allow_target_creation>false</allow_target_creation>
+          <filter>SELECT IPAddress WHERE org_id = :this-&gt;org_id</filter>
+          <dependencies><attribute id="attachment_id"/></dependencies>
+          <is_null_allowed>false</is_null_allowed>
+          <on_target_delete>DEL_MANUAL</on_target_delete>
+        </field>
+      </fields>
+      <presentation>
+        <details>
+          <items>
+            <item id="address" _delta="delete"/>
+            <item id="ipaddress_id" _delta="define"><rank>20</rank></item>
+          </items>
+        </details>
+        <search>
+          <items>
+            <item id="address" _delta="delete"/>
+            <item id="ipaddress_id" _delta="define"><rank>20</rank></item>
+          </items>
+        </search>
+      </presentation>
+    </class>
+    <class id="CloudNatGatewayPublicAddress" _delta="must_exist">
+      <properties>
+        <naming>
+          <attributes>
+            <attribute id="address" _delta="delete"/>
+            <attribute id="ipaddress_id_friendlyname" _delta="define"/>
+          </attributes>
+        </naming>
+        <reconciliation>
+          <attributes>
+            <attribute id="address" _delta="delete"/>
+            <attribute id="ipaddress_id" _delta="define"/>
+          </attributes>
+        </reconciliation>
+        <uniqueness_rules>
+          <rule id="host_on_gateway" _delta="must_exist">
+            <attributes>
+              <attribute id="address" _delta="delete"/>
+              <attribute id="ipaddress_id" _delta="define"/>
+            </attributes>
+          </rule>
+        </uniqueness_rules>
+      </properties>
+      <fields>
+        <field id="address" xsi:type="AttributeString" _delta="delete"/>
+        <field id="ipaddress_id" xsi:type="AttributeExternalKey" _delta="define">
+          <sql>ipaddress_id</sql>
+          <target_class>IPAddress</target_class>
+          <allow_target_creation>false</allow_target_creation>
+          <filter>SELECT IPAddress WHERE org_id = :this-&gt;org_id</filter>
+          <dependencies><attribute id="nat_gateway_id"/></dependencies>
+          <is_null_allowed>false</is_null_allowed>
+          <on_target_delete>DEL_MANUAL</on_target_delete>
+        </field>
+      </fields>
+      <presentation>
+        <details>
+          <items>
+            <item id="address" _delta="delete"/>
+            <item id="ipaddress_id" _delta="define"><rank>20</rank></item>
+          </items>
+        </details>
+        <search>
+          <items>
+            <item id="address" _delta="delete"/>
+            <item id="ipaddress_id" _delta="define"><rank>20</rank></item>
+          </items>
+        </search>
+      </presentation>
+    </class>
+  </classes>
+</itop_design>

@@ -1,0 +1,461 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<itop_design version="3.3" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://rudnerbjoern.github.io/iTop-schema/3.3/itop_design.xsd">
+  <classes>
+    <class id="Cloud" _delta="must_exist">
+      <fields>
+        <field id="provider_resource_id" xsi:type="AttributeString" _delta="define">
+          <sql>provider_resource_id</sql>
+          <is_null_allowed>true</is_null_allowed>
+        </field>
+        <field id="cloud_lans_list" xsi:type="AttributeLinkedSet" _delta="define">
+          <linked_class>CloudLan</linked_class>
+          <ext_key_to_me>cloud_id</ext_key_to_me>
+          <edit_mode>none</edit_mode>
+          <count_min>0</count_min>
+          <count_max>0</count_max>
+        </field>
+        <field id="cloud_nat_gateways_list" xsi:type="AttributeLinkedSet" _delta="define">
+          <linked_class>CloudNatGateway</linked_class>
+          <ext_key_to_me>cloud_id</ext_key_to_me>
+          <edit_mode>none</edit_mode>
+          <count_min>0</count_min>
+          <count_max>0</count_max>
+        </field>
+      </fields>
+      <presentation>
+        <details>
+          <items>
+            <item id="col:col1">
+              <items>
+                <item id="fieldset:Cloud:Provider" _delta="define">
+                  <rank>30</rank>
+                  <items>
+                    <item id="provider_resource_id"><rank>10</rank></item>
+                  </items>
+                </item>
+              </items>
+            </item>
+            <item id="cloud_lans_list" _delta="define"><rank>45</rank></item>
+            <item id="cloud_nat_gateways_list" _delta="define"><rank>46</rank></item>
+          </items>
+        </details>
+      </presentation>
+    </class>
+    <class id="CloudLan" _delta="define">
+      <parent>FunctionalCI</parent>
+      <properties>
+        <category>bizmodel,searchable,configmgmt</category>
+        <abstract>false</abstract>
+        <key_type>autoincrement</key_type>
+        <db_table>br_cloud_lan</db_table>
+        <db_key_field>id</db_key_field>
+        <db_final_class_field/>
+        <naming>
+          <attributes><attribute id="name"/></attributes>
+          <complementary_attributes><attribute id="cloud_name"/></complementary_attributes>
+        </naming>
+        <style><icon>../../images/icons/icons8-network.svg</icon></style>
+        <reconciliation>
+          <attributes>
+            <attribute id="cloud_id"/>
+            <attribute id="provider_resource_id"/>
+          </attributes>
+        </reconciliation>
+        <uniqueness_rules>
+          <rule id="lan_id_in_cloud">
+            <attributes>
+              <attribute id="cloud_id"/>
+              <attribute id="provider_resource_id"/>
+            </attributes>
+            <is_blocking>true</is_blocking>
+          </rule>
+        </uniqueness_rules>
+      </properties>
+      <fields>
+        <field id="cloud_id" xsi:type="AttributeExternalKey">
+          <sql>cloud_id</sql>
+          <target_class>Cloud</target_class>
+          <is_null_allowed>false</is_null_allowed>
+          <on_target_delete>DEL_MANUAL</on_target_delete>
+        </field>
+        <field id="cloud_name" xsi:type="AttributeExternalField">
+          <extkey_attcode>cloud_id</extkey_attcode>
+          <target_attcode>name</target_attcode>
+        </field>
+        <field id="provider_resource_id" xsi:type="AttributeString">
+          <sql>provider_resource_id</sql>
+          <is_null_allowed>false</is_null_allowed>
+        </field>
+        <field id="public" xsi:type="AttributeBoolean">
+          <sql>public</sql>
+          <default_value>false</default_value>
+          <is_null_allowed>false</is_null_allowed>
+        </field>
+      </fields>
+      <methods/>
+      <presentation>
+        <details>
+          <items>
+            <item id="name"><rank>10</rank></item>
+            <item id="org_id"><rank>20</rank></item>
+            <item id="cloud_id"><rank>30</rank></item>
+            <item id="provider_resource_id"><rank>40</rank></item>
+            <item id="public"><rank>50</rank></item>
+            <item id="description"><rank>60</rank></item>
+          </items>
+        </details>
+        <search>
+          <items>
+            <item id="name"><rank>10</rank></item>
+            <item id="org_id"><rank>20</rank></item>
+            <item id="cloud_id"><rank>30</rank></item>
+            <item id="provider_resource_id"><rank>40</rank></item>
+            <item id="public"><rank>50</rank></item>
+          </items>
+        </search>
+        <list>
+          <items>
+            <item id="cloud_id"><rank>10</rank></item>
+            <item id="provider_resource_id"><rank>20</rank></item>
+            <item id="public"><rank>30</rank></item>
+            <item id="org_id"><rank>40</rank></item>
+          </items>
+        </list>
+      </presentation>
+    </class>
+    <class id="CloudNatGateway" _delta="define">
+      <parent>FunctionalCI</parent>
+      <properties>
+        <category>bizmodel,searchable,configmgmt</category>
+        <abstract>false</abstract>
+        <key_type>autoincrement</key_type>
+        <db_table>br_cloud_nat_gateway</db_table>
+        <db_key_field>id</db_key_field>
+        <db_final_class_field/>
+        <naming>
+          <attributes><attribute id="name"/></attributes>
+          <complementary_attributes><attribute id="cloud_name"/></complementary_attributes>
+        </naming>
+        <style><icon>../../images/icons/icons8-network.svg</icon></style>
+        <reconciliation>
+          <attributes>
+            <attribute id="cloud_id"/>
+            <attribute id="provider_resource_id"/>
+          </attributes>
+        </reconciliation>
+        <uniqueness_rules>
+          <rule id="gateway_id_in_cloud">
+            <attributes>
+              <attribute id="cloud_id"/>
+              <attribute id="provider_resource_id"/>
+            </attributes>
+            <is_blocking>true</is_blocking>
+          </rule>
+        </uniqueness_rules>
+      </properties>
+      <fields>
+        <field id="cloud_id" xsi:type="AttributeExternalKey">
+          <sql>cloud_id</sql>
+          <target_class>Cloud</target_class>
+          <is_null_allowed>false</is_null_allowed>
+          <on_target_delete>DEL_MANUAL</on_target_delete>
+        </field>
+        <field id="cloud_name" xsi:type="AttributeExternalField">
+          <extkey_attcode>cloud_id</extkey_attcode>
+          <target_attcode>name</target_attcode>
+        </field>
+        <field id="provider_resource_id" xsi:type="AttributeString">
+          <sql>provider_resource_id</sql>
+          <is_null_allowed>false</is_null_allowed>
+        </field>
+        <field id="lan_attachments_list" xsi:type="AttributeLinkedSet">
+          <linked_class>CloudNatGatewayLan</linked_class>
+          <ext_key_to_me>nat_gateway_id</ext_key_to_me>
+          <edit_mode>actions</edit_mode>
+          <count_min>0</count_min>
+          <count_max>0</count_max>
+        </field>
+        <field id="public_addresses_list" xsi:type="AttributeLinkedSet">
+          <linked_class>CloudNatGatewayPublicAddress</linked_class>
+          <ext_key_to_me>nat_gateway_id</ext_key_to_me>
+          <edit_mode>actions</edit_mode>
+          <count_min>0</count_min>
+          <count_max>0</count_max>
+        </field>
+      </fields>
+      <methods/>
+      <presentation>
+        <details>
+          <items>
+            <item id="name"><rank>10</rank></item>
+            <item id="org_id"><rank>20</rank></item>
+            <item id="cloud_id"><rank>30</rank></item>
+            <item id="provider_resource_id"><rank>40</rank></item>
+            <item id="description"><rank>50</rank></item>
+            <item id="lan_attachments_list"><rank>60</rank></item>
+            <item id="public_addresses_list"><rank>70</rank></item>
+          </items>
+        </details>
+        <search>
+          <items>
+            <item id="name"><rank>10</rank></item>
+            <item id="org_id"><rank>20</rank></item>
+            <item id="cloud_id"><rank>30</rank></item>
+            <item id="provider_resource_id"><rank>40</rank></item>
+          </items>
+        </search>
+        <list>
+          <items>
+            <item id="cloud_id"><rank>10</rank></item>
+            <item id="provider_resource_id"><rank>20</rank></item>
+            <item id="org_id"><rank>30</rank></item>
+          </items>
+        </list>
+      </presentation>
+    </class>
+    <class id="CloudNatGatewayLan" _delta="define">
+      <parent>cmdbAbstractObject</parent>
+      <properties>
+        <category>bizmodel,searchable,configmgmt</category>
+        <abstract>false</abstract>
+        <key_type>autoincrement</key_type>
+        <db_table>br_cloud_nat_gateway_lan</db_table>
+        <db_key_field>id</db_key_field>
+        <db_final_class_field/>
+        <naming>
+          <attributes>
+            <attribute id="nat_gateway_id_friendlyname"/>
+            <attribute id="cloud_lan_id_friendlyname"/>
+          </attributes>
+        </naming>
+        <reconciliation>
+          <attributes>
+            <attribute id="nat_gateway_id"/>
+            <attribute id="cloud_lan_id"/>
+          </attributes>
+        </reconciliation>
+        <uniqueness_rules>
+          <rule id="gateway_lan_pair">
+            <attributes>
+              <attribute id="nat_gateway_id"/>
+              <attribute id="cloud_lan_id"/>
+            </attributes>
+            <is_blocking>true</is_blocking>
+          </rule>
+        </uniqueness_rules>
+      </properties>
+      <fields>
+        <field id="nat_gateway_id" xsi:type="AttributeExternalKey">
+          <sql>nat_gateway_id</sql>
+          <target_class>CloudNatGateway</target_class>
+          <is_null_allowed>false</is_null_allowed>
+          <on_target_delete>DEL_MANUAL</on_target_delete>
+        </field>
+        <field id="cloud_lan_id" xsi:type="AttributeExternalKey">
+          <sql>cloud_lan_id</sql>
+          <target_class>CloudLan</target_class>
+          <is_null_allowed>false</is_null_allowed>
+          <on_target_delete>DEL_MANUAL</on_target_delete>
+          <filter><![CDATA[SELECT CloudLan AS lan JOIN Cloud AS cloud ON lan.cloud_id = cloud.id JOIN CloudNatGateway AS gateway ON gateway.cloud_id = cloud.id WHERE gateway.id = :this->nat_gateway_id]]></filter>
+          <dependencies>
+            <attribute id="nat_gateway_id"/>
+          </dependencies>
+        </field>
+        <field id="org_id" xsi:type="AttributeExternalField">
+          <extkey_attcode>nat_gateway_id</extkey_attcode>
+          <target_attcode>org_id</target_attcode>
+        </field>
+        <field id="addresses_list" xsi:type="AttributeLinkedSet">
+          <linked_class>CloudNatGatewayLanAddress</linked_class>
+          <ext_key_to_me>attachment_id</ext_key_to_me>
+          <edit_mode>actions</edit_mode>
+          <count_min>0</count_min>
+          <count_max>0</count_max>
+        </field>
+      </fields>
+      <methods/>
+      <presentation>
+        <details>
+          <items>
+            <item id="nat_gateway_id"><rank>10</rank></item>
+            <item id="cloud_lan_id"><rank>20</rank></item>
+            <item id="addresses_list"><rank>30</rank></item>
+          </items>
+        </details>
+        <search>
+          <items>
+            <item id="nat_gateway_id"><rank>10</rank></item>
+            <item id="cloud_lan_id"><rank>20</rank></item>
+          </items>
+        </search>
+        <list>
+          <items>
+            <item id="nat_gateway_id"><rank>10</rank></item>
+            <item id="cloud_lan_id"><rank>20</rank></item>
+          </items>
+        </list>
+      </presentation>
+    </class>
+    <class id="CloudNatGatewayLanAddress" _delta="define">
+      <parent>cmdbAbstractObject</parent>
+      <properties>
+        <category>bizmodel,searchable,configmgmt</category>
+        <abstract>false</abstract>
+        <key_type>autoincrement</key_type>
+        <db_table>br_cloud_nat_gateway_lan_address</db_table>
+        <db_key_field>id</db_key_field>
+        <db_final_class_field/>
+        <naming>
+          <attributes>
+            <attribute id="address"/>
+          </attributes>
+        </naming>
+        <reconciliation>
+          <attributes>
+            <attribute id="attachment_id"/>
+            <attribute id="address"/>
+          </attributes>
+        </reconciliation>
+        <uniqueness_rules>
+          <rule id="host_on_attachment">
+            <attributes>
+              <attribute id="attachment_id"/>
+              <attribute id="address"/>
+            </attributes>
+            <is_blocking>true</is_blocking>
+          </rule>
+        </uniqueness_rules>
+      </properties>
+      <fields>
+        <field id="attachment_id" xsi:type="AttributeExternalKey">
+          <sql>attachment_id</sql>
+          <target_class>CloudNatGatewayLan</target_class>
+          <is_null_allowed>false</is_null_allowed>
+          <on_target_delete>DEL_MANUAL</on_target_delete>
+        </field>
+        <field id="org_id" xsi:type="AttributeExternalField">
+          <extkey_attcode>attachment_id</extkey_attcode>
+          <target_attcode>org_id</target_attcode>
+        </field>
+        <field id="address" xsi:type="AttributeString">
+          <sql>address</sql>
+          <is_null_allowed>false</is_null_allowed>
+        </field>
+        <field id="prefix_length" xsi:type="AttributeInteger">
+          <sql>prefix_length</sql>
+          <is_null_allowed>true</is_null_allowed>
+        </field>
+      </fields>
+      <methods/>
+      <presentation>
+        <details>
+          <items>
+            <item id="attachment_id"><rank>10</rank></item>
+            <item id="address"><rank>20</rank></item>
+            <item id="prefix_length"><rank>30</rank></item>
+          </items>
+        </details>
+        <search>
+          <items>
+            <item id="attachment_id"><rank>10</rank></item>
+            <item id="address"><rank>20</rank></item>
+            <item id="prefix_length"><rank>30</rank></item>
+          </items>
+        </search>
+        <list>
+          <items>
+            <item id="attachment_id"><rank>10</rank></item>
+            <item id="prefix_length"><rank>30</rank></item>
+          </items>
+        </list>
+      </presentation>
+    </class>
+    <class id="CloudNatGatewayPublicAddress" _delta="define">
+      <parent>cmdbAbstractObject</parent>
+      <properties>
+        <category>bizmodel,searchable,configmgmt</category>
+        <abstract>false</abstract>
+        <key_type>autoincrement</key_type>
+        <db_table>br_cloud_nat_gateway_public_address</db_table>
+        <db_key_field>id</db_key_field>
+        <db_final_class_field/>
+        <naming>
+          <attributes>
+            <attribute id="address"/>
+          </attributes>
+        </naming>
+        <reconciliation>
+          <attributes>
+            <attribute id="nat_gateway_id"/>
+            <attribute id="address"/>
+          </attributes>
+        </reconciliation>
+        <uniqueness_rules>
+          <rule id="host_on_gateway">
+            <attributes>
+              <attribute id="nat_gateway_id"/>
+              <attribute id="address"/>
+            </attributes>
+            <is_blocking>true</is_blocking>
+          </rule>
+        </uniqueness_rules>
+      </properties>
+      <fields>
+        <field id="nat_gateway_id" xsi:type="AttributeExternalKey">
+          <sql>nat_gateway_id</sql>
+          <target_class>CloudNatGateway</target_class>
+          <is_null_allowed>false</is_null_allowed>
+          <on_target_delete>DEL_MANUAL</on_target_delete>
+        </field>
+        <field id="org_id" xsi:type="AttributeExternalField">
+          <extkey_attcode>nat_gateway_id</extkey_attcode>
+          <target_attcode>org_id</target_attcode>
+        </field>
+        <field id="address" xsi:type="AttributeString">
+          <sql>address</sql>
+          <is_null_allowed>false</is_null_allowed>
+        </field>
+      </fields>
+      <methods/>
+      <presentation>
+        <details>
+          <items>
+            <item id="nat_gateway_id"><rank>10</rank></item>
+            <item id="address"><rank>20</rank></item>
+          </items>
+        </details>
+        <search>
+          <items>
+            <item id="nat_gateway_id"><rank>10</rank></item>
+            <item id="address"><rank>20</rank></item>
+          </items>
+        </search>
+        <list>
+          <items>
+            <item id="nat_gateway_id"><rank>10</rank></item>
+          </items>
+        </list>
+      </presentation>
+    </class>
+  </classes>
+  <menus>
+    <menu id="ConfigManagementOverview" xsi:type="DashboardMenuNode" _delta="must_exist">
+      <definition>
+        <cells>
+          <cell id="1" _delta="must_exist">
+            <dashlets>
+              <dashlet id="CloudLan" xsi:type="DashletBadge" _delta="define">
+                <rank>9</rank>
+                <class>CloudLan</class>
+              </dashlet>
+              <dashlet id="CloudNatGateway" xsi:type="DashletBadge" _delta="define">
+                <rank>10</rank>
+                <class>CloudNatGateway</class>
+              </dashlet>
+            </dashlets>
+          </cell>
+        </cells>
+      </definition>
+    </menu>
+  </menus>
+</itop_design>
