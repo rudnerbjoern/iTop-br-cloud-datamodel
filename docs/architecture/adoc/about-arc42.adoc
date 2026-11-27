@@ -1,0 +1,1 @@
+This architecture uses the English https://github.com/arc42/arc42-template/tree/88cc1d6c867980a45facc959f428cdb2dfccb6d7/EN/adoc[arc42 AsciiDoc template] by Peter Hruschka, Gernot Starke and contributors, licensed under https://creativecommons.org/licenses/by-sa/4.0/[CC BY-SA 4.0]. The chapters contain project-specific content for the iTop cloud inventory.
