@@ -55,7 +55,7 @@ if ($bridgeMetadata['dependencies'] !== ["$name/$version", 'teemip-ip-mgmt/3.3.1
     throw new RuntimeException('Unexpected optional bridge registration.');
 }
 $base = simplexml_load_file("$root/$name/datamodel.$name.xml", SimpleXMLElement::class, LIBXML_NONET);
-foreach (['CloudLan', 'CloudNatGateway'] as $class) {
+foreach (['CloudLan', 'CloudNatGateway', 'CloudNetworkLoadBalancer'] as $class) {
     $badges = $base->xpath("menus/menu[@id='ConfigManagementOverview']/definition/cells/cell[@id='1']"
         . "/dashlets/dashlet[class='$class']");
     if (count($badges) !== 1 || (string) $badges[0]->attributes('xsi', true)->type !== 'DashletBadge') {
@@ -182,4 +182,42 @@ foreach ([$assignment, $publicAddress] as $class) {
         throw new RuntimeException('The bridge must replace the NAT address throughout the model with its required IPAM reference.');
     }
 }
-echo "Cloud module registration, gateway inventory, IP object links and XML schemas passed.\n";
+$nlbClass = 'CloudNetworkLoadBalancer';
+$nlb = $base->xpath("classes/class[@id='$nlbClass' and parent='FunctionalCI']")[0] ?? null;
+$nlbList = $cloud->xpath("fields/field[@id='cloud_network_load_balancers_list']")[0] ?? null;
+if ($nlb === null || (string) $nlbList?->linked_class !== $nlbClass || (string) $nlbList?->ext_key_to_me !== 'cloud_id'
+    || !$cloud->xpath("presentation/details/items/item[@id='cloud_network_load_balancers_list']")) {
+    throw new RuntimeException('Each Cloud must list its network load balancers.');
+}
+foreach (['reconciliation', 'uniqueness_rules/rule[is_blocking="true"]'] as $path) {
+    if (array_map('strval', $nlb->xpath("properties/$path/attributes/attribute/@id")) !== ['cloud_id', 'provider_resource_id']) {
+        throw new RuntimeException('The load balancer ID must be scoped to its Cloud.');
+    }
+}
+foreach (['listener', 'backend'] as $role) {
+    $class = $nlbClass . ucfirst($role) . 'Address';
+    $lan = $nlb->xpath("fields/field[@id='{$role}_lan_id' and target_class='CloudLan' and is_null_allowed='false']")[0] ?? null;
+    $list = $nlb->xpath("fields/field[@id='{$role}_addresses_list']")[0] ?? null;
+    if ((string) $lan?->filter !== 'SELECT CloudLan WHERE cloud_id = :this->cloud_id'
+        || (string) $list?->linked_class !== $class || (string) $list?->ext_key_to_me !== 'load_balancer_id'
+        || !$nlb->xpath("presentation/details/items/item[@id='{$role}_addresses_list']")) {
+        throw new RuntimeException("Invalid load balancer LAN or address list for $role.");
+    }
+    $assignment = $base->xpath("classes/class[@id='$class']")[0];
+    $ipam = $model->xpath("classes/class[@id='$class']")[0];
+    foreach (['reconciliation', 'uniqueness_rules/rule'] as $path) {
+        if (array_map('strval', $assignment->xpath("properties/$path/attributes/attribute/@id")) !== ['load_balancer_id', 'address']
+            || !$ipam->xpath("properties/$path/attributes/attribute[@id='ipaddress_id' and @_delta='define']")) {
+            throw new RuntimeException("Invalid address identity for $class.");
+        }
+    }
+    if (!$ipam->xpath("fields/field[@id='address' and @_delta='delete']")
+        || !$ipam->xpath("fields/field[@id='ipaddress_id' and target_class='IPAddress' and on_target_delete='DEL_MANUAL']")) {
+        throw new RuntimeException("The TeemIP bridge must replace the host literal for $class.");
+    }
+}
+if (!$base->xpath("classes/class[@id='{$nlbClass}BackendAddress']/fields/field[@id='prefix_length']")
+    || $model->xpath("classes/class[@id='{$nlbClass}BackendAddress']/fields/field[@id='prefix_length']")) {
+    throw new RuntimeException('The backend prefix must be stored independently of the address representation.');
+}
+echo "Cloud module registration, network inventory, IP object links and XML schemas passed.\n";

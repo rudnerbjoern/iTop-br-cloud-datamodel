@@ -5,10 +5,10 @@
     <author>Björn Rudner</author>
     <label>Cloud data model</label>
     <description>Provides a common data model for cloud infrastructure across providers in iTop.</description>
-    <version>0.1.0</version>
+    <version>0.2.0</version>
     <modules type="array">
-        <module><id>br-cloud-datamodel</id><version>0.1.0</version></module>
-        <module><id>br-cloud-datamodel-bridge-for-teemip</id><version>0.1.0</version></module>
+        <module><id>br-cloud-datamodel</id><version>0.2.0</version></module>
+        <module><id>br-cloud-datamodel-bridge-for-teemip</id><version>0.2.0</version></module>
     </modules>
     <release_date>2026-11-26</release_date>
     <version_description>Provider-neutral Cloud data model and optional TeemIP integration.</version_description>

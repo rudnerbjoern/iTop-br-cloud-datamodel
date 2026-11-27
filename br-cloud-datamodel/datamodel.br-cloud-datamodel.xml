@@ -21,6 +21,13 @@
           <count_min>0</count_min>
           <count_max>0</count_max>
         </field>
+        <field id="cloud_network_load_balancers_list" xsi:type="AttributeLinkedSet" _delta="define">
+          <linked_class>CloudNetworkLoadBalancer</linked_class>
+          <ext_key_to_me>cloud_id</ext_key_to_me>
+          <edit_mode>none</edit_mode>
+          <count_min>0</count_min>
+          <count_max>0</count_max>
+        </field>
       </fields>
       <presentation>
         <details>
@@ -37,6 +44,7 @@
             </item>
             <item id="cloud_lans_list" _delta="define"><rank>45</rank></item>
             <item id="cloud_nat_gateways_list" _delta="define"><rank>46</rank></item>
+            <item id="cloud_network_load_balancers_list" _delta="define"><rank>47</rank></item>
           </items>
         </details>
       </presentation>
@@ -92,7 +100,34 @@
           <is_null_allowed>false</is_null_allowed>
         </field>
       </fields>
-      <methods/>
+      <event_listeners>
+        <event_listener id="CheckLoadBalancerCloud">
+          <event>EVENT_DB_CHECK_TO_WRITE</event>
+          <rank>12</rank>
+          <callback>CheckLoadBalancerCloud</callback>
+        </event_listener>
+      </event_listeners>
+      <methods>
+        <method id="CheckLoadBalancerCloud">
+          <type>EventListener</type>
+          <code><![CDATA[
+public function CheckLoadBalancerCloud(Combodo\iTop\Service\Events\EventData $event)
+{
+    if ($this->GetKey() <= 0 || (int) $this->GetOriginal('cloud_id') === (int) $this->Get('cloud_id')) {
+        return;
+    }
+    $search = DBObjectSearch::FromOQL(
+        'SELECT CloudNetworkLoadBalancer WHERE cloud_id != :cloud AND (listener_lan_id = :lan OR backend_lan_id = :lan)'
+    );
+    $search->AllowAllData();
+    $balancers = new DBObjectSet($search, [], ['cloud' => $this->Get('cloud_id'), 'lan' => $this->GetKey()]);
+    if ($balancers->Count() > 0) {
+        $this->AddCheckIssue(Dict::S('Class:CloudLan/Check:LoadBalancerInCloud'));
+    }
+}
+          ]]></code>
+        </method>
+      </methods>
       <presentation>
         <details>
           <items>
@@ -437,6 +472,284 @@
         </list>
       </presentation>
     </class>
+    <class id="CloudNetworkLoadBalancer" _delta="define">
+      <parent>FunctionalCI</parent>
+      <properties>
+        <category>bizmodel,searchable,configmgmt</category>
+        <abstract>false</abstract>
+        <key_type>autoincrement</key_type>
+        <db_table>br_cloud_network_load_balancer</db_table>
+        <db_key_field>id</db_key_field>
+        <db_final_class_field/>
+        <naming>
+          <attributes><attribute id="name"/></attributes>
+          <complementary_attributes><attribute id="cloud_name"/></complementary_attributes>
+        </naming>
+        <style><icon>../../images/icons/icons8-network.svg</icon></style>
+        <reconciliation>
+          <attributes>
+            <attribute id="cloud_id"/>
+            <attribute id="provider_resource_id"/>
+          </attributes>
+        </reconciliation>
+        <uniqueness_rules>
+          <rule id="load_balancer_id_in_cloud">
+            <attributes>
+              <attribute id="cloud_id"/>
+              <attribute id="provider_resource_id"/>
+            </attributes>
+            <is_blocking>true</is_blocking>
+          </rule>
+        </uniqueness_rules>
+      </properties>
+      <fields>
+        <field id="cloud_id" xsi:type="AttributeExternalKey">
+          <sql>cloud_id</sql>
+          <target_class>Cloud</target_class>
+          <is_null_allowed>false</is_null_allowed>
+          <on_target_delete>DEL_MANUAL</on_target_delete>
+        </field>
+        <field id="cloud_name" xsi:type="AttributeExternalField">
+          <extkey_attcode>cloud_id</extkey_attcode>
+          <target_attcode>name</target_attcode>
+        </field>
+        <field id="provider_resource_id" xsi:type="AttributeString">
+          <sql>provider_resource_id</sql>
+          <is_null_allowed>false</is_null_allowed>
+        </field>
+        <field id="listener_lan_id" xsi:type="AttributeExternalKey">
+          <sql>listener_lan_id</sql>
+          <target_class>CloudLan</target_class>
+          <allow_target_creation>false</allow_target_creation>
+          <is_null_allowed>false</is_null_allowed>
+          <on_target_delete>DEL_MANUAL</on_target_delete>
+          <filter>SELECT CloudLan WHERE cloud_id = :this-&gt;cloud_id</filter>
+          <dependencies><attribute id="cloud_id"/></dependencies>
+        </field>
+        <field id="backend_lan_id" xsi:type="AttributeExternalKey">
+          <sql>backend_lan_id</sql>
+          <target_class>CloudLan</target_class>
+          <allow_target_creation>false</allow_target_creation>
+          <is_null_allowed>false</is_null_allowed>
+          <on_target_delete>DEL_MANUAL</on_target_delete>
+          <filter>SELECT CloudLan WHERE cloud_id = :this-&gt;cloud_id</filter>
+          <dependencies><attribute id="cloud_id"/></dependencies>
+        </field>
+        <field id="listener_addresses_list" xsi:type="AttributeLinkedSet">
+          <linked_class>CloudNetworkLoadBalancerListenerAddress</linked_class>
+          <ext_key_to_me>load_balancer_id</ext_key_to_me>
+          <edit_mode>actions</edit_mode>
+          <count_min>0</count_min>
+          <count_max>0</count_max>
+        </field>
+        <field id="backend_addresses_list" xsi:type="AttributeLinkedSet">
+          <linked_class>CloudNetworkLoadBalancerBackendAddress</linked_class>
+          <ext_key_to_me>load_balancer_id</ext_key_to_me>
+          <edit_mode>actions</edit_mode>
+          <count_min>0</count_min>
+          <count_max>0</count_max>
+        </field>
+      </fields>
+      <event_listeners>
+        <event_listener id="CheckLoadBalancerLans">
+          <event>EVENT_DB_CHECK_TO_WRITE</event>
+          <rank>12</rank>
+          <callback>CheckLoadBalancerLans</callback>
+        </event_listener>
+      </event_listeners>
+      <methods>
+        <method id="CheckLoadBalancerLans">
+          <type>EventListener</type>
+          <code><![CDATA[
+public function CheckLoadBalancerLans(Combodo\iTop\Service\Events\EventData $event)
+{
+    $cloudId = (int) $this->Get('cloud_id');
+    foreach (['listener_lan_id', 'backend_lan_id'] as $role) {
+        $lanId = (int) $this->Get($role);
+        $lan = $lanId > 0 ? MetaModel::GetObject('CloudLan', $lanId, false, true) : null;
+        if ($lan !== null && (int) $lan->Get('cloud_id') !== $cloudId) {
+            $this->AddCheckIssue(Dict::S('Class:CloudNetworkLoadBalancer/Check:LansInCloud'));
+            return;
+        }
+    }
+}
+          ]]></code>
+        </method>
+      </methods>
+      <presentation>
+        <details>
+          <items>
+            <item id="name"><rank>10</rank></item>
+            <item id="org_id"><rank>20</rank></item>
+            <item id="cloud_id"><rank>30</rank></item>
+            <item id="provider_resource_id"><rank>40</rank></item>
+            <item id="listener_lan_id"><rank>50</rank></item>
+            <item id="backend_lan_id"><rank>60</rank></item>
+            <item id="description"><rank>70</rank></item>
+            <item id="listener_addresses_list"><rank>80</rank></item>
+            <item id="backend_addresses_list"><rank>90</rank></item>
+          </items>
+        </details>
+        <search>
+          <items>
+            <item id="name"><rank>10</rank></item>
+            <item id="org_id"><rank>20</rank></item>
+            <item id="cloud_id"><rank>30</rank></item>
+            <item id="provider_resource_id"><rank>40</rank></item>
+          </items>
+        </search>
+        <list>
+          <items>
+            <item id="cloud_id"><rank>10</rank></item>
+            <item id="provider_resource_id"><rank>20</rank></item>
+            <item id="listener_lan_id"><rank>30</rank></item>
+            <item id="backend_lan_id"><rank>40</rank></item>
+            <item id="org_id"><rank>50</rank></item>
+          </items>
+        </list>
+      </presentation>
+    </class>
+    <class id="CloudNetworkLoadBalancerListenerAddress" _delta="define">
+      <parent>cmdbAbstractObject</parent>
+      <properties>
+        <category>bizmodel,searchable,configmgmt</category>
+        <abstract>false</abstract>
+        <key_type>autoincrement</key_type>
+        <db_table>br_cloud_nlb_listener_address</db_table>
+        <db_key_field>id</db_key_field>
+        <db_final_class_field/>
+        <naming>
+          <attributes>
+            <attribute id="address"/>
+          </attributes>
+        </naming>
+        <reconciliation>
+          <attributes>
+            <attribute id="load_balancer_id"/>
+            <attribute id="address"/>
+          </attributes>
+        </reconciliation>
+        <uniqueness_rules>
+          <rule id="host_on_load_balancer">
+            <attributes>
+              <attribute id="load_balancer_id"/>
+              <attribute id="address"/>
+            </attributes>
+            <is_blocking>true</is_blocking>
+          </rule>
+        </uniqueness_rules>
+      </properties>
+      <fields>
+        <field id="load_balancer_id" xsi:type="AttributeExternalKey">
+          <sql>load_balancer_id</sql>
+          <target_class>CloudNetworkLoadBalancer</target_class>
+          <is_null_allowed>false</is_null_allowed>
+          <on_target_delete>DEL_MANUAL</on_target_delete>
+        </field>
+        <field id="org_id" xsi:type="AttributeExternalField">
+          <extkey_attcode>load_balancer_id</extkey_attcode>
+          <target_attcode>org_id</target_attcode>
+        </field>
+        <field id="address" xsi:type="AttributeString">
+          <sql>address</sql>
+          <is_null_allowed>false</is_null_allowed>
+        </field>
+      </fields>
+      <methods/>
+      <presentation>
+        <details>
+          <items>
+            <item id="load_balancer_id"><rank>10</rank></item>
+            <item id="address"><rank>20</rank></item>
+          </items>
+        </details>
+        <search>
+          <items>
+            <item id="load_balancer_id"><rank>10</rank></item>
+            <item id="address"><rank>20</rank></item>
+          </items>
+        </search>
+        <list>
+          <items>
+            <item id="load_balancer_id"><rank>10</rank></item>
+          </items>
+        </list>
+      </presentation>
+    </class>
+    <class id="CloudNetworkLoadBalancerBackendAddress" _delta="define">
+      <parent>cmdbAbstractObject</parent>
+      <properties>
+        <category>bizmodel,searchable,configmgmt</category>
+        <abstract>false</abstract>
+        <key_type>autoincrement</key_type>
+        <db_table>br_cloud_nlb_backend_address</db_table>
+        <db_key_field>id</db_key_field>
+        <db_final_class_field/>
+        <naming>
+          <attributes>
+            <attribute id="address"/>
+          </attributes>
+        </naming>
+        <reconciliation>
+          <attributes>
+            <attribute id="load_balancer_id"/>
+            <attribute id="address"/>
+          </attributes>
+        </reconciliation>
+        <uniqueness_rules>
+          <rule id="host_on_load_balancer">
+            <attributes>
+              <attribute id="load_balancer_id"/>
+              <attribute id="address"/>
+            </attributes>
+            <is_blocking>true</is_blocking>
+          </rule>
+        </uniqueness_rules>
+      </properties>
+      <fields>
+        <field id="load_balancer_id" xsi:type="AttributeExternalKey">
+          <sql>load_balancer_id</sql>
+          <target_class>CloudNetworkLoadBalancer</target_class>
+          <is_null_allowed>false</is_null_allowed>
+          <on_target_delete>DEL_MANUAL</on_target_delete>
+        </field>
+        <field id="org_id" xsi:type="AttributeExternalField">
+          <extkey_attcode>load_balancer_id</extkey_attcode>
+          <target_attcode>org_id</target_attcode>
+        </field>
+        <field id="address" xsi:type="AttributeString">
+          <sql>address</sql>
+          <is_null_allowed>false</is_null_allowed>
+        </field>
+        <field id="prefix_length" xsi:type="AttributeInteger">
+          <sql>prefix_length</sql>
+          <is_null_allowed>true</is_null_allowed>
+        </field>
+      </fields>
+      <methods/>
+      <presentation>
+        <details>
+          <items>
+            <item id="load_balancer_id"><rank>10</rank></item>
+            <item id="address"><rank>20</rank></item>
+            <item id="prefix_length"><rank>30</rank></item>
+          </items>
+        </details>
+        <search>
+          <items>
+            <item id="load_balancer_id"><rank>10</rank></item>
+            <item id="address"><rank>20</rank></item>
+            <item id="prefix_length"><rank>30</rank></item>
+          </items>
+        </search>
+        <list>
+          <items>
+            <item id="load_balancer_id"><rank>10</rank></item>
+            <item id="prefix_length"><rank>30</rank></item>
+          </items>
+        </list>
+      </presentation>
+    </class>
   </classes>
   <menus>
     <menu id="ConfigManagementOverview" xsi:type="DashboardMenuNode" _delta="must_exist">
@@ -451,6 +764,10 @@
               <dashlet id="CloudNatGateway" xsi:type="DashletBadge" _delta="define">
                 <rank>10</rank>
                 <class>CloudNatGateway</class>
+              </dashlet>
+              <dashlet id="CloudNetworkLoadBalancer" xsi:type="DashletBadge" _delta="define">
+                <rank>11</rank>
+                <class>CloudNetworkLoadBalancer</class>
               </dashlet>
             </dashlets>
           </cell>
