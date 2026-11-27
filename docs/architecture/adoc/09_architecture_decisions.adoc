@@ -1,0 +1,41 @@
+ifndef::imagesdir[:imagesdir: ../images]
+
+[[section-design-decisions]]
+== Architecture Decisions
+
+
+ifdef::arc42help[]
+[role="arc42help"]
+****
+.Contents
+Important, expensive, large scale or risky architecture decisions including rationales.
+With "decisions" we mean selecting one alternative based on given criteria.
+
+Please use your judgement to decide whether an architectural decision should be documented
+here in this central section or whether you better document it locally
+(e.g. within the white box template of one building block).
+
+Avoid redundancy. 
+Refer to section 4, where you already captured the most important decisions of your architecture.
+
+.Motivation
+Stakeholders of your system should be able to comprehend and retrace your decisions.
+
+.Form
+Various options:
+
+* ADR (https://cognitect.com/blog/2011/11/15/documenting-architecture-decisions[Documenting Architecture Decisions]) for every important decision
+* List or table, ordered by importance and consequences or:
+* more detailed in form of separate sections per decision
+
+.Further Information
+
+See https://docs.arc42.org/section-9/[Architecture Decisions] in the arc42 documentation.
+There you will find links and examples about ADR.
+
+****
+endif::arc42help[]
+
+The LAN identity contract spans two repositories. The base model scopes the resource ID to the parent Cloud, and the collector uses the same pair to match incoming LANs. This allows local IDs to repeat across VDCs and makes the parent reference part of any identity migration. https://github.com/rudnerbjoern/iTop-br-cloud-datamodel/blob/main/README.md[Base model contract] · https://github.com/rudnerbjoern/iTop-br-ionos-cloud-collector/blob/main/collectors/LanCollector.json[LAN source configuration]
+
+For a change to a shared identity contract, keep one Architecture Decision Record (ADR) under `docs/architecture/decisions/` in the repository that owns that contract. A decision about matching IONOS observations belongs with the collector. Record the context, alternatives, decision, status and consequences for existing installations. Link the issue and affected PRs to that record.

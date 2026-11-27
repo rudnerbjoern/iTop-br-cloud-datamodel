@@ -1,0 +1,42 @@
+name: Architecture HTML
+
+on:
+  push:
+    branches: ['**']
+    paths:
+      - 'docs/architecture/**'
+      - 'scripts/render-architecture.cjs'
+      - 'package.json'
+      - 'package-lock.json'
+      - '.github/workflows/architecture-html.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  render:
+    if: github.event.deleted != true
+    runs-on: ubuntu-26.04
+    timeout-minutes: 10
+    steps:
+      - name: Check out model and architecture sources
+        uses: actions/checkout@v7
+        with:
+          persist-credentials: false
+
+      - uses: actions/setup-node@v7
+        with:
+          node-version: '22'
+
+      - name: Render both HTML editions
+        run: |
+          npm ci --ignore-scripts --cache .tmp/npm-cache
+          npm run docs:architecture -- "$RUNNER_TEMP/architecture-html"
+
+      - name: Upload architecture HTML
+        uses: actions/upload-artifact@v7
+        with:
+          name: architecture-html
+          path: ${{ runner.temp }}/architecture-html/*.html
+          if-no-files-found: error

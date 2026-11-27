@@ -4,6 +4,8 @@ This extension adds provider-neutral cloud inventory to iTop 3.3. It extends the
 native `Cloud` and defines `CloudLan`, `CloudNatGateway`, `CloudVpnGateway` and `CloudNetworkLoadBalancer`.
 Provider extensions can depend on `br-cloud-datamodel/0.3.0` and add fields, sample data or collectors independently.
 
+See the [arc42 architecture documentation](docs/architecture/README.md) for repository responsibilities and the identity of a LAN across imports.
+
 ## Installation
 
 Extract the release ZIP and place its `br-cloud-datamodel/` bundle (including

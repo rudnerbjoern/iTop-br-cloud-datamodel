@@ -6,10 +6,12 @@
     "node": ">=22.18.0"
   },
   "scripts": {
+    "docs:architecture": "node scripts/render-architecture.cjs",
     "lint:md": "markdownlint --config .markdownlint-cli2.jsonc --configPointer /config --dot --ignore-path .gitignore --ignore .git \"**/*.md\"",
     "lint:spelling": "cspell lint --config cspell.json --dot --no-progress"
   },
   "devDependencies": {
+    "@asciidoctor/core": "3.0.4",
     "cspell": "10.5.2",
     "markdownlint-cli": "0.50.1"
   },
