@@ -75,11 +75,13 @@ A table with quality goals and concrete scenarios, ordered by priorities
 ****
 endif::arc42help[]
 
-In priority order:
-
-. *Protect existing records.* A missing page must never be treated as evidence of withdrawal.
-. *Preserve manual work.* An operator's address assignment must survive a refresh of imported assignments.
-. *Keep identity stable.* Renames, reordered connections and provider IDs reused in different scopes must resolve to the intended iTop records.
+[cols="1,2,4",options="header"]
+|===
+|Priority |Quality goal |Observable scenario
+|1 |Protect existing records |When IPsec page two fails, the previous IPsec gateway remains under its Cloud. <<vpn-partial,Partial import>>
+|2 |Preserve manual work |When an imported LAN host changes, the adjacent manual assignment keeps its iTop key and prefix. <<vpn-repeat,Manual assignment>>
+|3 |Keep identity stable |When two connections change order, the same gateway and LAN attachment keys appear after import. <<vpn-repeat,Repeat import>>
+|===
 
 <<section-quality-scenarios,Quality scenarios>> gives the CMDB observations and run results for each goal.
 

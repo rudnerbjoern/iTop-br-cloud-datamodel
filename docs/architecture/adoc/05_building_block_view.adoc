@@ -68,7 +68,10 @@ In the best case you will get away with examples or simple signatures.
 endif::arc42help[]
 
 The collector is the writer. The two model repositories define the classes it can write and the relationships operators see.
-The neutral bundle has two independently selected modules. The IONOS add-on depends on the core module and works with either address representation.
+The neutral bundle supplies the required core and an optional bridge. The IONOS add-on depends on the core and works with either address representation. Setup selects the bridge when the core and TeemIP IP Management are both selected.
+
+.Which components must be present for synchronization?
+image::cloud-inventory-modules.svg[The external collector requires the IONOS add-on and the neutral core. The optional bridge depends on the core and TeemIP IP Management.]
 
 ifdef::arc42help[]
 [role="arc42help"]

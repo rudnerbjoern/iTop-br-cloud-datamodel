@@ -1,0 +1,34 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="780" height="246" viewBox="0 0 780 246" role="img" aria-labelledby="title desc">
+  <title id="title">Cloud inventory module dependencies</title>
+  <desc id="desc">The external collector requires both cloud modules. The IONOS add-on depends on the neutral core. With IPAM, the bridge depends on the neutral core and TeemIP IP Management. Each arrow points to a prerequisite.</desc>
+  <defs>
+    <marker id="head" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M0 0 L10 5 0 10Z" fill="#334155"/></marker>
+  </defs>
+  <rect width="780" height="246" fill="white"/>
+  <rect x="247" y="12" width="521" height="214" rx="8" fill="#fafbfd" stroke="#7b8996" stroke-dasharray="5 4"/>
+  <g fill="#eef3f7" stroke="#465868" stroke-width="1.5">
+    <rect x="12" y="65" width="154" height="54" rx="5"/>
+    <rect x="273" y="65" width="180" height="54" rx="5"/>
+    <rect x="557" y="65" width="186" height="54" rx="5"/>
+  </g>
+  <g fill="#e8f5ef" stroke="#40745a" stroke-width="1.5">
+    <rect x="273" y="157" width="180" height="50" rx="5"/>
+    <rect x="557" y="157" width="186" height="50" rx="5"/>
+  </g>
+  <g stroke="#334155" stroke-width="2" fill="none" marker-end="url(#head)">
+    <path d="M168 92H270"/>
+    <path d="M455 92H554"/>
+    <path d="M455 172H500V109H554"/>
+    <path d="M455 186H554"/>
+  </g>
+  <g fill="#172b3a" font-family="sans-serif" font-size="15" text-anchor="middle">
+    <text x="89" y="88">IONOS collector</text><text x="89" y="107" font-size="13">with Combodo Base</text>
+    <text x="363" y="98">IONOS add-on</text><text x="650" y="98">Neutral core</text>
+    <text x="363" y="188">TeemIP bridge</text><text x="650" y="188">TeemIP IP Management</text>
+  </g>
+  <g fill="#334155" font-family="sans-serif" font-size="13">
+    <text x="262" y="36" font-weight="bold">iTop target</text>
+    <text x="273" y="146">Additional modules with IPAM</text>
+    <text x="12" y="240">An arrow points to a required component. The collector checks both cloud modules before synchronization.</text>
+  </g>
+</svg>

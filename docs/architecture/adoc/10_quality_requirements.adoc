@@ -117,7 +117,7 @@ endif::arc42help[]
 |===
 |Stimulus |What the operator can verify
 |A later page fails in one VPN list. |The log names the region, protocol and pages read. The process signals failure. Compare the retained IPsec name and updated WireGuard name in <<vpn-partial,the failed run>>.
-|An imported LAN address is replaced beside a manual assignment. |The manual assignment still has its original ID, host, prefix and empty owner. With the bridge the shared host is still present. <<vpn-repeat,Replacement and manual ownership>>
+|An imported LAN address is replaced beside a manual assignment. |Look up the manual assignment by its original ID. Its prefix is still 25 and its owner is empty. With the bridge the shared host is still present. <<vpn-repeat,Replacement and manual ownership>>
 |Two connections change order, then the gateway is renamed. |Compare the before/after iTop keys in <<vpn-repeat,the repeat import>>. The gateway key survives the rename and the untouched LAN assignment keeps its key.
 |Two VDCs have the same LAN ID. |Each Cloud shows its own LAN. The VPN gateways appear only under their connections' VDC. https://github.com/rudnerbjoern/iTop-br-ionos-cloud-collector/blob/fc97fb65ad334e506c1121193965fb27e16c4a60/tests/vpn-import.php#L99-L116[Parent and endpoint assertions]
 |A manually linked IPv6 block is reported and then explicitly cleared. |The same manual Cloud-to-block link remains through both runs. https://github.com/rudnerbjoern/iTop-br-ionos-cloud-collector/blob/fc97fb65ad334e506c1121193965fb27e16c4a60/tests/vdc-sync.php[IPv6 allocation fixture]
