@@ -38,7 +38,7 @@ Read the XML path `/itop_design/classes/class/@id` in each linked module to repr
 [cols="2,4,1",options="header"]
 |===
 |Class IDs |Role |Source
-|Cloud, VirtualHost, VirtualMachine |The virtualization module defines Cloud's parent and inherited VirtualMachine membership. Container Management adds the Cloud’s container-host list. |https://github.com/Combodo/iTop/blob/3.3.0/datamodels/2.x/itop-virtualization-mgmt/datamodel.itop-virtualization-mgmt.xml[Virtualization] · https://github.com/Combodo/iTop/blob/3.3.0/datamodels/2.x/itop-container-mgmt/datamodel.itop-container-mgmt.xml[Containers]
+|Cloud, VirtualHost, VirtualMachine, ContainerHost |The virtualization module defines Cloud's parent and inherited VirtualMachine membership. Container Management adds the Cloud’s container-host list. |https://github.com/Combodo/iTop/blob/3.3.0/datamodels/2.x/itop-virtualization-mgmt/datamodel.itop-virtualization-mgmt.xml[Virtualization] · https://github.com/Combodo/iTop/blob/3.3.0/datamodels/2.x/itop-container-mgmt/datamodel.itop-container-mgmt.xml[Containers]
 |FunctionalCI, Location |LANs, gateways and load balancers inherit CI attributes. VDC mapping matches a provider-owned location by exact name. |https://github.com/Combodo/iTop/blob/3.3.0/datamodels/2.x/itop-config-mgmt/datamodel.itop-config-mgmt.xml[Configuration model]
 |Organization |VDC mapping resolves the configured customer and provider. IPAM queries use the customer organization. |https://github.com/Combodo/iTop/blob/3.3.0/datamodels/2.x/itop-structure/datamodel.itop-structure.xml[Organization model]
 |cmdbAbstractObject |Base for attachments, host assignments and the Cloud-to-IP-object link. |https://github.com/Combodo/iTop/blob/3.3.0/application/cmdbabstract.class.inc.php[iTop object base]
