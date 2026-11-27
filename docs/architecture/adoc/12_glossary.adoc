@@ -1,0 +1,50 @@
+ifndef::imagesdir[:imagesdir: ../images]
+
+[[section-glossary]]
+== Glossary
+
+ifdef::arc42help[]
+[role="arc42help"]
+****
+.Contents
+The most important domain and technical terms that your stakeholders use when discussing the system.
+
+You can also see the glossary as source for translations if you work in multi-language teams.
+
+.Motivation
+You should clearly define your terms, so that all stakeholders
+
+* have an identical understanding of these terms
+* do not use synonyms and homonyms
+
+
+.Form
+
+A table with columns <Term> and <Definition>.
+
+Potentially more columns in case you need translations.
+
+
+.Further Information
+
+See https://docs.arc42.org/section-12/[Glossary] in the arc42 documentation.
+
+****
+endif::arc42help[]
+
+[cols="e,2e" options="header"]
+|===
+|Term |Definition
+
+|VDC
+|Virtual datacenter in IONOS, represented by an iTop `Cloud`.
+
+|Reconciliation
+|Matching an incoming observation to an existing iTop record using configured attributes.
+
+|Source key
+|A value identifying the source responsible for maintaining an imported assignment.
+
+|TeemIP
+|The iTop IP address management extension used by the optional bridge.
+|===
