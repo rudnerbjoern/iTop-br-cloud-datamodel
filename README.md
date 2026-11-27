@@ -1,8 +1,8 @@
 # Cloud data model for iTop
 
 This extension adds provider-neutral cloud inventory to iTop 3.3. It extends the
-native `Cloud` and defines `CloudLan`, `CloudNatGateway` and `CloudNetworkLoadBalancer`.
-Provider extensions can depend on `br-cloud-datamodel/0.2.0` and add fields, sample data or collectors independently.
+native `Cloud` and defines `CloudLan`, `CloudNatGateway`, `CloudVpnGateway` and `CloudNetworkLoadBalancer`.
+Provider extensions can depend on `br-cloud-datamodel/0.3.0` and add fields, sample data or collectors independently.
 
 See the [arc42 architecture documentation](docs/architecture/README.md) for repository responsibilities and the identity of a LAN across imports.
 
@@ -28,7 +28,7 @@ distinguish its own assignments from those maintained by other users or sources.
 ## Clouds and their LANs
 
 Open **Configuration management > Overview > Virtualization** to browse
-all Cloud LANs, Cloud NAT gateways and Cloud network load balancers.
+all Cloud LANs, Cloud NAT and VPN gateways, and Cloud network load balancers.
 
 `Cloud.provider_resource_id` is the identifier assigned by the provider.
 The field is optional for manually maintained Clouds. Collectors must resolve
@@ -61,6 +61,39 @@ required `ipaddress_id` reference to an IP address in the gateway's
 organization. The address can occur once per gateway (public) or per LAN
 attachment (private). Each row's name shows the host. The assignment details
 provide the link to the TeemIP record when the bridge is installed.
+
+## VPN gateways
+
+Open a Cloud's **VPN gateways** tab to find its IPsec and WireGuard gateways.
+Each detail page shows its protocol and public endpoint, plus the IKE version
+or listen port when reported. **LAN attachments** opens the connected LANs
+and their LAN-side host assignments. **WireGuard interface addresses** opens
+the virtual interface assignments. Both host lists retain the reported IPv4
+or IPv6 prefix separately. With TeemIP, the endpoint and host assignments
+link to the customer's IP objects. Removing an assignment keeps its IP object.
+
+### Gateway class decision
+
+Both gateway classes inherit `name`, `org_id`, `description` and the iTop CI
+lifecycle from `FunctionalCI`. Both use a required `cloud_id` and expose the
+Cloud's name through `cloud_name`. Their provider IDs are stable across renames,
+but their supported identity scopes differ.
+
+- NAT reconciles by `cloud_id` and `provider_resource_id`. VPN reconciles
+  by `org_id`, the provider-defined `source_namespace` and `provider_resource_id`.
+- NAT links multiple public hosts. VPN has one public endpoint.
+- Each class has explicit LAN attachments, unique per gateway and LAN,
+  and stores host addresses and prefixes on those attachments. VPN also
+  records protocol, IKE version, listen port and WireGuard interface hosts.
+- Source attribution for each class and VPN provider metadata belong in
+  the provider extension.
+
+Only the Cloud reference, display name of the Cloud and the provider ID
+have closely matching field definitions. The concrete classes keep their
+own reconciliation, attachment and address rules. A shared parent would
+move fields of existing NAT objects during Setup for limited reuse. This
+additive model leaves the existing NAT class, tables, fields and relationships
+in place as Setup installs the VPN classes.
 
 ## Network load balancers
 

@@ -1,7 +1,7 @@
 <?php
 /** Register the provider-neutral Cloud inventory module for the native iTop model. */
 
-SetupWebPage::AddModule(__FILE__, 'br-cloud-datamodel/0.2.0', [
+SetupWebPage::AddModule(__FILE__, 'br-cloud-datamodel/0.3.0', [
     'label' => 'Cloud data model',
     'category' => 'business',
     'itop_version' => '3.3.0',

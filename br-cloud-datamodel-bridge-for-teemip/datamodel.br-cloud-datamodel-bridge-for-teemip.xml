@@ -186,6 +186,134 @@
         </search>
       </presentation>
     </class>
+    <class id="CloudVpnGateway" _delta="must_exist">
+      <fields>
+        <field id="public_endpoint" xsi:type="AttributeString" _delta="delete"/>
+        <field id="public_endpoint_id" xsi:type="AttributeExternalKey" _delta="define">
+          <sql>public_endpoint_id</sql>
+          <target_class>IPv4Address</target_class>
+          <allow_target_creation>false</allow_target_creation>
+          <filter>SELECT IPv4Address WHERE org_id = :this-&gt;org_id</filter>
+          <dependencies><attribute id="org_id"/></dependencies>
+          <is_null_allowed>true</is_null_allowed>
+          <on_target_delete>DEL_MANUAL</on_target_delete>
+        </field>
+      </fields>
+      <presentation>
+        <details>
+          <items>
+            <item id="public_endpoint" _delta="delete"/>
+            <item id="public_endpoint_id" _delta="define"><rank>43</rank></item>
+          </items>
+        </details>
+        <list>
+          <items>
+            <item id="public_endpoint" _delta="delete"/>
+            <item id="public_endpoint_id" _delta="define"><rank>50</rank></item>
+          </items>
+        </list>
+      </presentation>
+    </class>
+    <class id="CloudVpnGatewayLanAddress" _delta="must_exist">
+      <properties>
+        <naming>
+          <attributes>
+            <attribute id="address" _delta="delete"/>
+            <attribute id="ipaddress_id_friendlyname" _delta="define"/>
+          </attributes>
+        </naming>
+        <reconciliation>
+          <attributes>
+            <attribute id="address" _delta="delete"/>
+            <attribute id="ipaddress_id" _delta="define"/>
+          </attributes>
+        </reconciliation>
+        <uniqueness_rules>
+          <rule id="host_on_attachment" _delta="must_exist">
+            <attributes>
+              <attribute id="address" _delta="delete"/>
+              <attribute id="ipaddress_id" _delta="define"/>
+            </attributes>
+          </rule>
+        </uniqueness_rules>
+      </properties>
+      <fields>
+        <field id="address" xsi:type="AttributeString" _delta="delete"/>
+        <field id="ipaddress_id" xsi:type="AttributeExternalKey" _delta="define">
+          <sql>ipaddress_id</sql>
+          <target_class>IPAddress</target_class>
+          <allow_target_creation>false</allow_target_creation>
+          <filter>SELECT IPAddress WHERE org_id = :this-&gt;org_id</filter>
+          <dependencies><attribute id="attachment_id"/></dependencies>
+          <is_null_allowed>false</is_null_allowed>
+          <on_target_delete>DEL_MANUAL</on_target_delete>
+        </field>
+      </fields>
+      <presentation>
+        <details>
+          <items>
+            <item id="address" _delta="delete"/>
+            <item id="ipaddress_id" _delta="define"><rank>20</rank></item>
+          </items>
+        </details>
+        <search>
+          <items>
+            <item id="address" _delta="delete"/>
+            <item id="ipaddress_id" _delta="define"><rank>20</rank></item>
+          </items>
+        </search>
+      </presentation>
+    </class>
+    <class id="CloudVpnGatewayInterfaceAddress" _delta="must_exist">
+      <properties>
+        <naming>
+          <attributes>
+            <attribute id="address" _delta="delete"/>
+            <attribute id="ipaddress_id_friendlyname" _delta="define"/>
+          </attributes>
+        </naming>
+        <reconciliation>
+          <attributes>
+            <attribute id="address" _delta="delete"/>
+            <attribute id="ipaddress_id" _delta="define"/>
+          </attributes>
+        </reconciliation>
+        <uniqueness_rules>
+          <rule id="host_on_gateway" _delta="must_exist">
+            <attributes>
+              <attribute id="address" _delta="delete"/>
+              <attribute id="ipaddress_id" _delta="define"/>
+            </attributes>
+          </rule>
+        </uniqueness_rules>
+      </properties>
+      <fields>
+        <field id="address" xsi:type="AttributeString" _delta="delete"/>
+        <field id="ipaddress_id" xsi:type="AttributeExternalKey" _delta="define">
+          <sql>ipaddress_id</sql>
+          <target_class>IPAddress</target_class>
+          <allow_target_creation>false</allow_target_creation>
+          <filter>SELECT IPAddress WHERE org_id = :this-&gt;org_id</filter>
+          <dependencies><attribute id="vpn_gateway_id"/></dependencies>
+          <is_null_allowed>false</is_null_allowed>
+          <on_target_delete>DEL_MANUAL</on_target_delete>
+        </field>
+      </fields>
+      <presentation>
+        <details>
+          <items>
+            <item id="address" _delta="delete"/>
+            <item id="ipaddress_id" _delta="define"><rank>20</rank></item>
+          </items>
+        </details>
+        <search>
+          <items>
+            <item id="address" _delta="delete"/>
+            <item id="ipaddress_id" _delta="define"><rank>20</rank></item>
+          </items>
+        </search>
+      </presentation>
+    </class>
     <class id="CloudNetworkLoadBalancerListenerAddress" _delta="must_exist">
       <properties>
         <naming>

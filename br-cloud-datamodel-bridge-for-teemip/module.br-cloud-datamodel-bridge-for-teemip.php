@@ -1,12 +1,12 @@
 <?php
 /** Associate Clouds with TeemIP blocks and subnets when IP Management is selected. */
 
-SetupWebPage::AddModule(__FILE__, 'br-cloud-datamodel-bridge-for-teemip/0.2.0', [
+SetupWebPage::AddModule(__FILE__, 'br-cloud-datamodel-bridge-for-teemip/0.3.0', [
     'label' => 'Cloud integration with TeemIP',
     'category' => 'business',
     'itop_version' => '3.3.0',
     'dependencies' => [
-        'br-cloud-datamodel/0.2.0',
+        'br-cloud-datamodel/0.3.0',
         'teemip-ip-mgmt/3.3.1 || !(teemip-ip-mgmt/0.0.0)',
     ],
     'mandatory' => false,
