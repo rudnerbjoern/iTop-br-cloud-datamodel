@@ -21,6 +21,13 @@
           <count_min>0</count_min>
           <count_max>0</count_max>
         </field>
+        <field id="cloud_vpn_gateways_list" xsi:type="AttributeLinkedSet" _delta="define">
+          <linked_class>CloudVpnGateway</linked_class>
+          <ext_key_to_me>cloud_id</ext_key_to_me>
+          <edit_mode>none</edit_mode>
+          <count_min>0</count_min>
+          <count_max>0</count_max>
+        </field>
         <field id="cloud_network_load_balancers_list" xsi:type="AttributeLinkedSet" _delta="define">
           <linked_class>CloudNetworkLoadBalancer</linked_class>
           <ext_key_to_me>cloud_id</ext_key_to_me>
@@ -44,6 +51,7 @@
             </item>
             <item id="cloud_lans_list" _delta="define"><rank>45</rank></item>
             <item id="cloud_nat_gateways_list" _delta="define"><rank>46</rank></item>
+            <item id="cloud_vpn_gateways_list" _delta="define"><rank>48</rank></item>
             <item id="cloud_network_load_balancers_list" _delta="define"><rank>47</rank></item>
           </items>
         </details>
@@ -472,6 +480,360 @@ public function CheckLoadBalancerCloud(Combodo\iTop\Service\Events\EventData $ev
         </list>
       </presentation>
     </class>
+    <class id="CloudVpnGateway" _delta="define">
+      <parent>FunctionalCI</parent>
+      <properties>
+        <category>bizmodel,searchable,configmgmt</category>
+        <abstract>false</abstract>
+        <key_type>autoincrement</key_type>
+        <db_table>br_cloud_vpn_gateway</db_table>
+        <db_key_field>id</db_key_field>
+        <db_final_class_field/>
+        <naming>
+          <attributes><attribute id="name"/></attributes>
+          <complementary_attributes><attribute id="cloud_name"/></complementary_attributes>
+        </naming>
+        <style><icon>../../images/icons/icons8-network.svg</icon></style>
+        <reconciliation>
+          <attributes>
+            <attribute id="org_id"/>
+            <attribute id="source_namespace"/>
+            <attribute id="provider_resource_id"/>
+          </attributes>
+        </reconciliation>
+        <uniqueness_rules>
+          <rule id="gateway_id_in_namespace">
+            <attributes>
+              <attribute id="org_id"/>
+              <attribute id="source_namespace"/>
+              <attribute id="provider_resource_id"/>
+            </attributes>
+            <is_blocking>true</is_blocking>
+          </rule>
+        </uniqueness_rules>
+      </properties>
+      <fields>
+        <field id="cloud_id" xsi:type="AttributeExternalKey">
+          <sql>cloud_id</sql>
+          <target_class>Cloud</target_class>
+          <is_null_allowed>false</is_null_allowed>
+          <on_target_delete>DEL_MANUAL</on_target_delete>
+        </field>
+        <field id="cloud_name" xsi:type="AttributeExternalField">
+          <extkey_attcode>cloud_id</extkey_attcode>
+          <target_attcode>name</target_attcode>
+        </field>
+        <field id="provider_resource_id" xsi:type="AttributeString">
+          <sql>provider_resource_id</sql>
+          <is_null_allowed>false</is_null_allowed>
+        </field>
+        <field id="source_namespace" xsi:type="AttributeString">
+          <sql>source_namespace</sql>
+          <is_null_allowed>false</is_null_allowed>
+        </field>
+        <field id="protocol" xsi:type="AttributeEnum">
+          <values>
+            <value id="ipsec"><code>ipsec</code></value>
+            <value id="wireguard"><code>wireguard</code></value>
+          </values>
+          <sql>protocol</sql>
+          <is_null_allowed>false</is_null_allowed>
+        </field>
+        <field id="public_endpoint" xsi:type="AttributeString">
+          <sql>public_endpoint</sql>
+          <is_null_allowed>true</is_null_allowed>
+        </field>
+        <field id="ike_version" xsi:type="AttributeString">
+          <sql>ike_version</sql>
+          <is_null_allowed>true</is_null_allowed>
+        </field>
+        <field id="listen_port" xsi:type="AttributeInteger">
+          <sql>listen_port</sql>
+          <is_null_allowed>true</is_null_allowed>
+        </field>
+        <field id="lan_attachments_list" xsi:type="AttributeLinkedSet">
+          <linked_class>CloudVpnGatewayLan</linked_class>
+          <ext_key_to_me>vpn_gateway_id</ext_key_to_me>
+          <edit_mode>actions</edit_mode>
+          <count_min>0</count_min>
+          <count_max>0</count_max>
+        </field>
+        <field id="interface_addresses_list" xsi:type="AttributeLinkedSet">
+          <linked_class>CloudVpnGatewayInterfaceAddress</linked_class>
+          <ext_key_to_me>vpn_gateway_id</ext_key_to_me>
+          <edit_mode>actions</edit_mode>
+          <count_min>0</count_min>
+          <count_max>0</count_max>
+        </field>
+      </fields>
+      <methods/>
+      <presentation>
+        <details>
+          <items>
+            <item id="name"><rank>10</rank></item>
+            <item id="org_id"><rank>20</rank></item>
+            <item id="cloud_id"><rank>30</rank></item>
+            <item id="provider_resource_id"><rank>40</rank></item>
+            <item id="source_namespace"><rank>41</rank></item>
+            <item id="protocol"><rank>42</rank></item>
+            <item id="public_endpoint"><rank>43</rank></item>
+            <item id="ike_version"><rank>44</rank></item>
+            <item id="listen_port"><rank>45</rank></item>
+            <item id="description"><rank>50</rank></item>
+            <item id="lan_attachments_list"><rank>60</rank></item>
+            <item id="interface_addresses_list"><rank>70</rank></item>
+          </items>
+        </details>
+        <search>
+          <items>
+            <item id="name"><rank>10</rank></item>
+            <item id="org_id"><rank>20</rank></item>
+            <item id="cloud_id"><rank>30</rank></item>
+            <item id="provider_resource_id"><rank>40</rank></item>
+          </items>
+        </search>
+        <list>
+          <items>
+            <item id="cloud_id"><rank>10</rank></item>
+            <item id="provider_resource_id"><rank>20</rank></item>
+            <item id="org_id"><rank>30</rank></item>
+            <item id="protocol"><rank>40</rank></item>
+            <item id="public_endpoint"><rank>50</rank></item>
+          </items>
+        </list>
+      </presentation>
+    </class>
+    <class id="CloudVpnGatewayLan" _delta="define">
+      <parent>cmdbAbstractObject</parent>
+      <properties>
+        <category>bizmodel,searchable,configmgmt</category>
+        <abstract>false</abstract>
+        <key_type>autoincrement</key_type>
+        <db_table>br_cloud_vpn_gateway_lan</db_table>
+        <db_key_field>id</db_key_field>
+        <db_final_class_field/>
+        <naming>
+          <attributes>
+            <attribute id="vpn_gateway_id_friendlyname"/>
+            <attribute id="cloud_lan_id_friendlyname"/>
+          </attributes>
+        </naming>
+        <reconciliation>
+          <attributes>
+            <attribute id="vpn_gateway_id"/>
+            <attribute id="cloud_lan_id"/>
+          </attributes>
+        </reconciliation>
+        <uniqueness_rules>
+          <rule id="gateway_lan_pair">
+            <attributes>
+              <attribute id="vpn_gateway_id"/>
+              <attribute id="cloud_lan_id"/>
+            </attributes>
+            <is_blocking>true</is_blocking>
+          </rule>
+        </uniqueness_rules>
+      </properties>
+      <fields>
+        <field id="vpn_gateway_id" xsi:type="AttributeExternalKey">
+          <sql>vpn_gateway_id</sql>
+          <target_class>CloudVpnGateway</target_class>
+          <is_null_allowed>false</is_null_allowed>
+          <on_target_delete>DEL_MANUAL</on_target_delete>
+        </field>
+        <field id="cloud_lan_id" xsi:type="AttributeExternalKey">
+          <sql>cloud_lan_id</sql>
+          <target_class>CloudLan</target_class>
+          <is_null_allowed>false</is_null_allowed>
+          <on_target_delete>DEL_MANUAL</on_target_delete>
+          <filter><![CDATA[SELECT CloudLan AS lan JOIN Cloud AS cloud ON lan.cloud_id = cloud.id JOIN CloudVpnGateway AS gateway ON gateway.cloud_id = cloud.id WHERE gateway.id = :this->vpn_gateway_id]]></filter>
+          <dependencies>
+            <attribute id="vpn_gateway_id"/>
+          </dependencies>
+        </field>
+        <field id="org_id" xsi:type="AttributeExternalField">
+          <extkey_attcode>vpn_gateway_id</extkey_attcode>
+          <target_attcode>org_id</target_attcode>
+        </field>
+        <field id="addresses_list" xsi:type="AttributeLinkedSet">
+          <linked_class>CloudVpnGatewayLanAddress</linked_class>
+          <ext_key_to_me>attachment_id</ext_key_to_me>
+          <edit_mode>actions</edit_mode>
+          <count_min>0</count_min>
+          <count_max>0</count_max>
+        </field>
+      </fields>
+      <methods/>
+      <presentation>
+        <details>
+          <items>
+            <item id="vpn_gateway_id"><rank>10</rank></item>
+            <item id="cloud_lan_id"><rank>20</rank></item>
+            <item id="addresses_list"><rank>30</rank></item>
+          </items>
+        </details>
+        <search>
+          <items>
+            <item id="vpn_gateway_id"><rank>10</rank></item>
+            <item id="cloud_lan_id"><rank>20</rank></item>
+          </items>
+        </search>
+        <list>
+          <items>
+            <item id="vpn_gateway_id"><rank>10</rank></item>
+            <item id="cloud_lan_id"><rank>20</rank></item>
+          </items>
+        </list>
+      </presentation>
+    </class>
+    <class id="CloudVpnGatewayLanAddress" _delta="define">
+      <parent>cmdbAbstractObject</parent>
+      <properties>
+        <category>bizmodel,searchable,configmgmt</category>
+        <abstract>false</abstract>
+        <key_type>autoincrement</key_type>
+        <db_table>br_cloud_vpn_gateway_lan_address</db_table>
+        <db_key_field>id</db_key_field>
+        <db_final_class_field/>
+        <naming>
+          <attributes>
+            <attribute id="address"/>
+          </attributes>
+        </naming>
+        <reconciliation>
+          <attributes>
+            <attribute id="attachment_id"/>
+            <attribute id="address"/>
+          </attributes>
+        </reconciliation>
+        <uniqueness_rules>
+          <rule id="host_on_attachment">
+            <attributes>
+              <attribute id="attachment_id"/>
+              <attribute id="address"/>
+            </attributes>
+            <is_blocking>true</is_blocking>
+          </rule>
+        </uniqueness_rules>
+      </properties>
+      <fields>
+        <field id="attachment_id" xsi:type="AttributeExternalKey">
+          <sql>attachment_id</sql>
+          <target_class>CloudVpnGatewayLan</target_class>
+          <is_null_allowed>false</is_null_allowed>
+          <on_target_delete>DEL_MANUAL</on_target_delete>
+        </field>
+        <field id="org_id" xsi:type="AttributeExternalField">
+          <extkey_attcode>attachment_id</extkey_attcode>
+          <target_attcode>org_id</target_attcode>
+        </field>
+        <field id="address" xsi:type="AttributeString">
+          <sql>address</sql>
+          <is_null_allowed>false</is_null_allowed>
+        </field>
+        <field id="prefix_length" xsi:type="AttributeInteger">
+          <sql>prefix_length</sql>
+          <is_null_allowed>true</is_null_allowed>
+        </field>
+      </fields>
+      <methods/>
+      <presentation>
+        <details>
+          <items>
+            <item id="attachment_id"><rank>10</rank></item>
+            <item id="address"><rank>20</rank></item>
+            <item id="prefix_length"><rank>30</rank></item>
+          </items>
+        </details>
+        <search>
+          <items>
+            <item id="attachment_id"><rank>10</rank></item>
+            <item id="address"><rank>20</rank></item>
+            <item id="prefix_length"><rank>30</rank></item>
+          </items>
+        </search>
+        <list>
+          <items>
+            <item id="attachment_id"><rank>10</rank></item>
+            <item id="prefix_length"><rank>30</rank></item>
+          </items>
+        </list>
+      </presentation>
+    </class>
+    <class id="CloudVpnGatewayInterfaceAddress" _delta="define">
+      <parent>cmdbAbstractObject</parent>
+      <properties>
+        <category>bizmodel,searchable,configmgmt</category>
+        <abstract>false</abstract>
+        <key_type>autoincrement</key_type>
+        <db_table>br_cloud_vpn_gateway_interface_address</db_table>
+        <db_key_field>id</db_key_field>
+        <db_final_class_field/>
+        <naming>
+          <attributes>
+            <attribute id="address"/>
+          </attributes>
+        </naming>
+        <reconciliation>
+          <attributes>
+            <attribute id="vpn_gateway_id"/>
+            <attribute id="address"/>
+          </attributes>
+        </reconciliation>
+        <uniqueness_rules>
+          <rule id="host_on_gateway">
+            <attributes>
+              <attribute id="vpn_gateway_id"/>
+              <attribute id="address"/>
+            </attributes>
+            <is_blocking>true</is_blocking>
+          </rule>
+        </uniqueness_rules>
+      </properties>
+      <fields>
+        <field id="vpn_gateway_id" xsi:type="AttributeExternalKey">
+          <sql>vpn_gateway_id</sql>
+          <target_class>CloudVpnGateway</target_class>
+          <is_null_allowed>false</is_null_allowed>
+          <on_target_delete>DEL_MANUAL</on_target_delete>
+        </field>
+        <field id="org_id" xsi:type="AttributeExternalField">
+          <extkey_attcode>vpn_gateway_id</extkey_attcode>
+          <target_attcode>org_id</target_attcode>
+        </field>
+        <field id="address" xsi:type="AttributeString">
+          <sql>address</sql>
+          <is_null_allowed>false</is_null_allowed>
+        </field>
+        <field id="prefix_length" xsi:type="AttributeInteger">
+          <sql>prefix_length</sql>
+          <is_null_allowed>true</is_null_allowed>
+        </field>
+      </fields>
+      <methods/>
+      <presentation>
+        <details>
+          <items>
+            <item id="vpn_gateway_id"><rank>10</rank></item>
+            <item id="address"><rank>20</rank></item>
+            <item id="prefix_length"><rank>30</rank></item>
+          </items>
+        </details>
+        <search>
+          <items>
+            <item id="vpn_gateway_id"><rank>10</rank></item>
+            <item id="address"><rank>20</rank></item>
+            <item id="prefix_length"><rank>30</rank></item>
+          </items>
+        </search>
+        <list>
+          <items>
+            <item id="vpn_gateway_id"><rank>10</rank></item>
+            <item id="prefix_length"><rank>30</rank></item>
+          </items>
+        </list>
+      </presentation>
+    </class>
     <class id="CloudNetworkLoadBalancer" _delta="define">
       <parent>FunctionalCI</parent>
       <properties>
@@ -764,6 +1126,10 @@ public function CheckLoadBalancerLans(Combodo\iTop\Service\Events\EventData $eve
               <dashlet id="CloudNatGateway" xsi:type="DashletBadge" _delta="define">
                 <rank>10</rank>
                 <class>CloudNatGateway</class>
+              </dashlet>
+              <dashlet id="CloudVpnGateway" xsi:type="DashletBadge" _delta="define">
+                <rank>12</rank>
+                <class>CloudVpnGateway</class>
               </dashlet>
               <dashlet id="CloudNetworkLoadBalancer" xsi:type="DashletBadge" _delta="define">
                 <rank>11</rank>

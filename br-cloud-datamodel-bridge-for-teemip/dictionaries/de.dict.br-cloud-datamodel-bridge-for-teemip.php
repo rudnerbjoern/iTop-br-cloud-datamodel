@@ -20,4 +20,7 @@ Dict::Add('DE DE', 'German', 'Deutsch', [
 
     'Class:CloudNetworkLoadBalancerListenerAddress/Attribute:ipaddress_id' => 'Host-Adresse',
     'Class:CloudNetworkLoadBalancerBackendAddress/Attribute:ipaddress_id' => 'Host-Adresse',
+    'Class:CloudVpnGateway/Attribute:public_endpoint_id' => 'Öffentlicher Endpunkt',
+    'Class:CloudVpnGatewayLanAddress/Attribute:ipaddress_id' => 'LAN-seitige Hostadresse',
+    'Class:CloudVpnGatewayInterfaceAddress/Attribute:ipaddress_id' => 'Hostadresse der VPN-Schnittstelle',
 ]);

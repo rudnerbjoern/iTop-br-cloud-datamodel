@@ -20,4 +20,7 @@ Dict::Add('EN US', 'English', 'English', [
 
     'Class:CloudNetworkLoadBalancerListenerAddress/Attribute:ipaddress_id' => 'Host address',
     'Class:CloudNetworkLoadBalancerBackendAddress/Attribute:ipaddress_id' => 'Host address',
+    'Class:CloudVpnGateway/Attribute:public_endpoint_id' => 'Public endpoint',
+    'Class:CloudVpnGatewayLanAddress/Attribute:ipaddress_id' => 'LAN-side host address',
+    'Class:CloudVpnGatewayInterfaceAddress/Attribute:ipaddress_id' => 'VPN interface host address',
 ]);
