@@ -17,6 +17,7 @@
   </g>
   <g stroke="#334155" stroke-width="2" fill="none" marker-end="url(#head)">
     <path d="M168 92H270"/>
+    <path d="M89 63V48H650V62"/>
     <path d="M455 92H554"/>
     <path d="M455 172H500V109H554"/>
     <path d="M455 186H554"/>

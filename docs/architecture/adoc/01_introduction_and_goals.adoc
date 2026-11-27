@@ -79,8 +79,8 @@ endif::arc42help[]
 |===
 |Priority |Quality goal |Observable scenario
 |1 |Protect existing records |When IPsec page two fails, the previous IPsec gateway remains under its Cloud. <<vpn-partial,Partial import>>
-|2 |Preserve manual work |When an imported LAN host changes, the adjacent manual assignment keeps its iTop key and prefix. <<vpn-repeat,Manual assignment>>
-|3 |Keep identity stable |When two connections change order, the same gateway and LAN attachment keys appear after import. <<vpn-repeat,Repeat import>>
+|2 |Preserve manual work |When an imported LAN host changes, the adjacent manual assignment keeps its iTop key, prefix and empty owner. <<vpn-repeat,Manual assignment>>
+|3 |Keep identity stable |IPsec and WireGuard report the same gateway UUID. Each keeps its own iTop key when connections change order. <<vpn-repeat,Repeat import>>
 |===
 
 <<section-quality-scenarios,Quality scenarios>> gives the CMDB observations and run results for each goal.
