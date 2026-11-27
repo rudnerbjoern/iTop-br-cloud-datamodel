@@ -39,6 +39,34 @@ See https://docs.arc42.org/section-6/[Runtime View] in the arc42 documentation.
 ****
 endif::arc42help[]
 
+[[vpn-runtime]]
+=== From the first observation to the Cloud tab
+
+. For an inventory report, run `php scripts/inventory.php` or Base `php exec.php --collect_only`. The shared reader saves `inventory.json` and `coverage.md` in a private run directory. The standalone command returns 0 for complete coverage, 2 for a saved partial snapshot and 1 for configuration or persistence failure.
+. For synchronization, run Base `php exec.php` with Compute and VPN selected. It locks its staging directory and reads fresh Compute and regional VPN lists. Before the Base writers start, the collector checks coverage of the required Compute lists and maps the VDCs, LANs, NAT gateways and load balancers. https://github.com/rudnerbjoern/iTop-br-ionos-cloud-collector/blob/fc97fb65ad334e506c1121193965fb27e16c4a60/collectors/main.php#L91-L148[Synchronization entry point]
+. The VDC source writes the parent Cloud. The LAN source resolves its iTop key and writes LANs 2 and 3 inside that Cloud. In the default sequence optional IPAM phases prepare NAT hosts, then NAT, load balancer and VPN REST phases run. https://github.com/rudnerbjoern/iTop-br-ionos-cloud-collector/blob/fc97fb65ad334e506c1121193965fb27e16c4a60/collectors/src/IonosCollectionPlan.php[Phase dependencies]
+. For <<vpn-context,Fixture IPsec>> (`6b3f6803-be6e-4247-8431-1031ff09f688`), `VpnInventory` validates both connections against that VDC. `VpnSync` resolves the parent and its LANs, validates IPAM placement when enabled, and applies the <<vpn-blocks,endpoint mapping>> for `203.0.113.10`. The fixture finds the IPsec and WireGuard gateways under the first Cloud and zero under the second. See <<vpn-deployment,the endpoint in each installation>>. https://github.com/rudnerbjoern/iTop-br-ionos-cloud-collector/blob/fc97fb65ad334e506c1121193965fb27e16c4a60/tests/vpn-import.php#L99-L116[Installed-target placement and endpoint assertions]
+
+[[vpn-repeat]]
+=== Reorder connections, then replace one host
+
+The fixture reverses the two IPsec connections and imports again. Both gateway IDs, all three LAN attachment IDs, the LAN and WireGuard interface assignment IDs, and the existing TeemIP host ID for `10.20.0.7` stay the same.
+The writer matches each row by its <<inventory-keys,scoped identity>>. List position and display name play no part. https://github.com/rudnerbjoern/iTop-br-ionos-cloud-collector/blob/fc97fb65ad334e506c1121193965fb27e16c4a60/collectors/src/InventoryReconciler.php[Lookup and update] · https://github.com/rudnerbjoern/iTop-br-ionos-cloud-collector/blob/fc97fb65ad334e506c1121193965fb27e16c4a60/tests/vpn-import.php#L125-L139[Repeat assertions]
+
+An operator then adds `10.20.0.8/25` on IPsec LAN 2. The next observation renames the gateway and replaces its imported `10.20.0.7/24` with `10.20.0.17/24`.
+The gateway keeps its ID, LAN 3 keeps its assignment ID, and the old imported assignment disappears. The manual row keeps its ID, prefix 25 and empty `ionos_source_key`.
+With the bridge, the shared old host and the manually redirected WireGuard public endpoint also survive. https://github.com/rudnerbjoern/iTop-br-ionos-cloud-collector/blob/fc97fb65ad334e506c1121193965fb27e16c4a60/tests/vpn-import.php#L141-L162[Manual and imported row assertions]
+
+[[vpn-partial]]
+=== IPsec page two fails while WireGuard completes
+
+With page size one, page one contains a proposed IPsec rename. Page two returns HTTP 403. The reader retains partial evidence, and `VpnSync::apply` checks completeness *before* calling the writer for <<inventory-coverage,that region and protocol>>.
+The log contains `de-txl/ipsec` and the literal text `1 pages read`. IPsec keeps the name set by the preceding successful import, `Fixture IPsec renamed`. The incomplete list authorizes no withdrawal.
+The complete WireGuard list updates its gateway to `WireGuard after page failure`. After processing the independent lists, the collector raises an error and Base exits unsuccessfully.
+The VPN fixture calls `runCollector($dir, false)` for this 403 response. The shared fixture helper checks that the Base process returned a nonzero status. https://github.com/rudnerbjoern/iTop-br-ionos-cloud-collector/blob/fc97fb65ad334e506c1121193965fb27e16c4a60/tests/vpn-import.php#L164-L177[VPN fixture call and record assertions] · https://github.com/rudnerbjoern/iTop-br-ionos-cloud-collector/blob/fc97fb65ad334e506c1121193965fb27e16c4a60/tests/vdc-sync.php#L77-L86[Shared exit-status assertion]
+
+The old IPsec state survives because the collector skips that list before writing it. A failure during REST writes has different consequences (<<section-technical-risks,risks>>). https://github.com/rudnerbjoern/iTop-br-ionos-cloud-collector/blob/fc97fb65ad334e506c1121193965fb27e16c4a60/collectors/src/VpnSync.php#L33-L50[Per-list failure handling]
+
 === Repeated LAN import
 
-The collector resolves the Cloud using the IONOS provider and the VDC UUID. The LAN source then matches `cloud_id` and the LAN's local `provider_resource_id`. It creates a record on zero matches, updates the existing record on one match and reports an error on multiple matches. A rename updates the same LAN. Another VDC can use the same local LAN ID. https://github.com/rudnerbjoern/iTop-br-ionos-cloud-collector/blob/main/collectors/LanCollector.json[LAN synchronization source]
+The LAN source matches `cloud_id` and the local `provider_resource_id`. It creates a LAN on zero matches, updates it on one and reports ambiguity on multiple matches. A rename updates the same LAN. Another VDC can use the same local number. https://github.com/rudnerbjoern/iTop-br-ionos-cloud-collector/blob/fc97fb65ad334e506c1121193965fb27e16c4a60/collectors/LanCollector.json[LAN source definition]

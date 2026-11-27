@@ -54,7 +54,7 @@ In literature, the idea of a _quality attribute tree_ has also been described, w
 ****
 endif::arc42help[]
 
-The checks below cover stable identities, isolation between datacenters and preservation of manual IP assignments.
+The <<section-introduction-and-goals,quality goals>> concern safety when the source is incomplete, preservation of operator edits and repeatable matching. Each can be checked through a collector result and the corresponding CMDB records.
 
 
 === Quality Scenarios
@@ -113,6 +113,12 @@ See https://quality.arc42.org[the Q42 quality model website] for detailed exampl
 
 endif::arc42help[]
 
-* *Repeatability.* Import LAN 7, rename it in IONOS and import it again. The iTop record should retain its key and show the new name.
-* *Isolation.* Import LAN 7 from each of two VDCs. Each Cloud should have its own LAN record.
-* *Preservation of manual work.* Given a matching manual link to a customer IPv6 block, import the VDC prefix and then explicitly clear it at the source. The manual link should survive both imports. https://github.com/rudnerbjoern/iTop-br-ionos-cloud-collector/blob/main/tests/base-integration.md[Collector integration checks]
+[cols="2,3",options="header"]
+|===
+|Stimulus |What the operator can verify
+|A later page fails in one VPN list. |The log names the region, protocol and pages read. The process signals failure. Compare the retained IPsec name and updated WireGuard name in <<vpn-partial,the failed run>>.
+|An imported LAN address is replaced beside a manual assignment. |Look up the manual assignment by its original ID. Its prefix is still 25 and its owner is empty. With the bridge the shared host is still present. <<vpn-repeat,Replacement and manual ownership>>
+|Two connections change order, then the gateway is renamed. |Compare the before/after iTop keys in <<vpn-repeat,the repeat import>>. The gateway key survives the rename and the untouched LAN assignment keeps its key.
+|Two VDCs have the same LAN ID. |Each Cloud shows its own LAN. The VPN gateways appear only under their connections' VDC. https://github.com/rudnerbjoern/iTop-br-ionos-cloud-collector/blob/fc97fb65ad334e506c1121193965fb27e16c4a60/tests/vpn-import.php#L99-L116[Parent and endpoint assertions]
+|A manually linked IPv6 block is reported and then explicitly cleared. |The same manual Cloud-to-block link remains through both runs. https://github.com/rudnerbjoern/iTop-br-ionos-cloud-collector/blob/fc97fb65ad334e506c1121193965fb27e16c4a60/tests/vdc-sync.php[IPv6 allocation fixture]
+|===

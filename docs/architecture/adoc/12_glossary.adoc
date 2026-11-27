@@ -32,19 +32,17 @@ See https://docs.arc42.org/section-12/[Glossary] in the arc42 documentation.
 ****
 endif::arc42help[]
 
-[cols="e,2e" options="header"]
+[cols="1,3",options="header"]
 |===
-|Term |Definition
-
-|VDC
-|Virtual datacenter in IONOS, represented by an iTop `Cloud`.
-
-|Reconciliation
-|Matching an incoming observation to an existing iTop record using configured attributes.
-
-|Source key
-|A value identifying the source responsible for maintaining an imported assignment.
-
-|TeemIP
-|The iTop IP address management extension used by the optional bridge.
+|Term |Meaning in this inventory
+|Address assignment |A row associating one host with a gateway, attachment or load balancer role. A reported prefix belongs to that assignment.
+|Attachment |A relationship between a gateway and a particular LAN in its Cloud.
+|Bare / Bridge |The two iTop target profiles in the fixtures. Both use the neutral and IONOS modules. Bridge also installs TeemIP and the neutral bridge module.
+|Coverage / scope |Coverage records what was read for one selected collection, including page count, status and completeness. A VPN scope is one regional protocol list for the configured source.
+|IPAM / TeemIP |IP address management. TeemIP models addresses, blocks and subnets in iTop.
+|Public endpoint |The IPv4 host exposed by an IPsec or WireGuard VPN gateway. LAN-side and WireGuard interface hosts have separate roles.
+|Reconciliation |Matching an observation to a CMDB record by its identity and applying permitted changes.
+|Source key / namespace |A source key attributes a row or link to its writer. The VPN source namespace delimits the provider IDs that may be matched together.
+|VDC / Cloud |An IONOS virtual datacenter and its representation as an iTop `Cloud`.
+|Withdrawal |Removal of previously imported, source-owned records after a complete observation establishes their absence in the applicable scope.
 |===
