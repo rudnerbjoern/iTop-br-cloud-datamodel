@@ -113,25 +113,21 @@ according the the following black box template:
 ****
 endif::arc42help[]
 
-The core extends native `Cloud` and defines `CloudLan`, `CloudNatGateway`, `CloudVpnGateway` and `CloudNetworkLoadBalancer`. Each child has a required `cloud_id`. The model also defines attachments and address assignments so the topology can be browsed without IPAM. https://github.com/rudnerbjoern/iTop-br-cloud-datamodel/blob/efceb36d92a8e75393a02dff41758c5e2f9701df/br-cloud-datamodel/datamodel.br-cloud-datamodel.xml[Core class definitions]
+The runtime modules contribute different parts of one installed model. The class index combines their declarations so that the key, writer and optional fields for a class can be read together.
+
+include::cloud-class-index.adoc[]
 
 ==== IONOS model
 
-The add-on extends these classes with VDC access protection, VPN region, tier and provisioning status, and the provenance fields used to recognize collector-managed records and address references. Optional samples supply the provider and locations. https://github.com/rudnerbjoern/iTop-br-ionos-cloud-datamodel/blob/e9790be69b3a612a40b66c9c3f6a3d8cfa066d1d/README.md[IONOS model contract]
+The add-on supplies optional provider and location samples. The collector resolves those records through the <<cloud-dependencies,native model>>.
 
 ==== IONOS collector
 
-The shared inventory engine reads and pages the selected IONOS lists. During synchronization the following components consume its observations in dependency order. https://github.com/rudnerbjoern/iTop-br-ionos-cloud-collector/blob/fc97fb65ad334e506c1121193965fb27e16c4a60/collectors/main.php[Collector registration and wiring]
+Start with the operation you intend to run, then look up its configured phase or API path.
 
-[cols="1,2,3",options="header"]
-|===
-|Observation |Mapping component |Writer and result in iTop
-|VDC | https://github.com/rudnerbjoern/iTop-br-ionos-cloud-collector/blob/fc97fb65ad334e506c1121193965fb27e16c4a60/collectors/src/VdcSync.php[VdcSync] resolves the customer, provider, location and access protection. |The Base VDC synchronization source writes `Cloud`. With IPv6 IPAM, `CloudIpLinkSync` manages the link to the allocated /56 block.
-|LAN within a VDC | https://github.com/rudnerbjoern/iTop-br-ionos-cloud-collector/blob/fc97fb65ad334e506c1121193965fb27e16c4a60/collectors/src/LanSync.php[LanSync] maps its local ID, name and public flag. |The Base LAN source resolves the Cloud key and writes `CloudLan`.
-|NAT gateway | https://github.com/rudnerbjoern/iTop-br-ionos-cloud-collector/blob/fc97fb65ad334e506c1121193965fb27e16c4a60/collectors/src/NatInventory.php[NatInventory] separates public hosts from private LAN attachments and prefixes. |`NatSync` reconciles `CloudNatGateway`, its attachments and address rows via REST.
-|Network load balancer | https://github.com/rudnerbjoern/iTop-br-ionos-cloud-collector/blob/fc97fb65ad334e506c1121193965fb27e16c4a60/collectors/src/NlbInventory.php[NlbInventory] resolves listener and backend roles within one VDC. |`NlbSync` writes `CloudNetworkLoadBalancer` and the host assignments on each side via REST.
-|VPN gateway | https://github.com/rudnerbjoern/iTop-br-ionos-cloud-collector/blob/fc97fb65ad334e506c1121193965fb27e16c4a60/collectors/src/VpnInventory.php[VpnInventory] validates the regional protocol list and maps each connection into one observed VDC. |`VpnSync` resolves the Cloud and LAN keys. `InventoryReconciler` writes the gateway, attachments, LAN addresses and any WireGuard interface addresses through the REST store.
-|===
+include::collector-phases.adoc[]
+
+include::collector-capabilities.adoc[]
 
 === Level 2
 
@@ -181,5 +177,4 @@ Specifies the internal structure of _building block x.1_.
 ****
 endif::arc42help[]
 
-`lnkCloudToIPObject` pairs `cloud_id` with `ipobject_id` once. Operators use it to associate blocks or subnets with a Cloud. The importer may set `source_key` on links it creates. A matching manual link already satisfies an allocation and stays manual.
-This network context also lets the bridge resolve private LAN and interface hosts. The public VPN endpoint is looked up within the customer organization. https://github.com/rudnerbjoern/iTop-br-ionos-cloud-collector/blob/fc97fb65ad334e506c1121193965fb27e16c4a60/collectors/src/NatIpResolver.php[Host resolution]
+The same Cloud network context serves two writers. The VDC phase maintains the provider allocation through individual links. The IPAM resolver uses the linked subnets and blocks to locate private hosts for NAT, load balancers and VPN. Follow <<allocation-flow,the allocation flow>> and <<cloud-class-index,the link identity>>.

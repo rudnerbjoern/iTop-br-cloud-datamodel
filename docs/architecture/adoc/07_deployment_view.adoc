@@ -93,4 +93,4 @@ endif::arc42help[]
 
 Configure the source token and selected products/regions on the collector host. Its inventory-only mode needs no iTop credentials.
 For synchronization, supply the existing organization IDs and an iTop service account allowed to administer the two sources and write the selected REST classes.
-Keep local parameters, staging CSVs and inventory reports private. `php exec.php --configure_only` configures the sources. The default run collects and synchronizes fresh observations. https://github.com/rudnerbjoern/iTop-br-ionos-cloud-collector/blob/fc97fb65ad334e506c1121193965fb27e16c4a60/README.md#itop-target-and-synchronization[Parameters and launch sequence]
+Keep local parameters, staging CSVs and inventory reports private. See <<collector-modes,the entry points>> for configuration, report-only and synchronization modes. https://github.com/rudnerbjoern/iTop-br-ionos-cloud-collector/blob/fc97fb65ad334e506c1121193965fb27e16c4a60/README.md#itop-target-and-synchronization[Parameters and launch sequence]

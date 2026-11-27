@@ -1,0 +1,234 @@
+[[collector-capabilities]]
+==== Collector capability index
+
+The index covers *23 product keys and 89 configured product/path pairs* at collector revision `34b9dc6ff8906b6e14bc38fef1ae363cb86f4e4e`. Each product heading is the literal selection key. Within a product, each GET path names the collection and any parent IDs. Regional bases instantiate the same template independently. The four `dbaas/` products use v2; the four `-v1` products have their own bases and resource sets. For a reproducible comparison, enumerate the plan with `jq -r 'to_entries[] as $p | $p.value.resources | keys[] | [$p.key, .] | @tsv' collectors/resources.json`. https://github.com/rudnerbjoern/iTop-br-ionos-cloud-collector/blob/34b9dc6ff8906b6e14bc38fef1ae363cb86f4e4e/collectors/resources.json[Executable plan and regional bases]
+
+Every selected path contributes a coverage record and any projected rows to the local inventory. *Reference* marks provider offerings or supported values. The image list can mix provider and customer images. A row marked *Report only* has no iTop writer. For the six paths used by synchronization, the last column names the result; <<sync-phases,the phase table>> identifies the mapper and conditions. A database backup, a server's volume membership and a provider's available storage region therefore have different meanings even though all three produce report rows. https://github.com/rudnerbjoern/iTop-br-ionos-cloud-collector/blob/34b9dc6ff8906b6e14bc38fef1ae363cb86f4e4e/docs/resource-catalog.md[Product scopes and public API references]
+
+
+.compute (Cloud API v6)
+[cols="5,3,2",options="header"]
+|===
+|GET path |Local observation |iTop destination
+|`/locations` |Provider locations (reference) |Report only
+|`/datacenters` |Customer virtual data centers |Cloud and optional IPv6 block link
+|`/ipblocks` |Reserved address pools |Report only
+|`/snapshots` |Volume snapshots |Report only
+|`/backupunits` |Backup units |Report only
+|`/templates` |Hardware templates (reference) |Report only
+|`/targetgroups` |Forwarding target groups |Report only
+|`/pccs` |Private Cross Connects |Report only
+|`/k8s` |Kubernetes clusters |Report only
+|`/images` |Public catalog and private images (mixed) |Report only
+|`/k8s/{k8sClusterId}/nodepools` |Node pools in the cluster |Report only
+|`/datacenters/{datacenterId}/servers` |Servers in the VDC |Report only
+|`/datacenters/{datacenterId}/volumes` |Volumes in the VDC, including detached volumes |Report only
+|`/datacenters/{datacenterId}/lans` |LANs in the VDC |CloudLan
+|`/datacenters/{datacenterId}/loadbalancers` |Classic load balancers |Report only
+|`/datacenters/{datacenterId}/natgateways` |NAT gateway topology |NAT topology and optional IPAM hosts
+|`/datacenters/{datacenterId}/networkloadbalancers` |Network load balancer topology |NLB topology and optional IPAM hosts
+|`/datacenters/{datacenterId}/applicationloadbalancers` |Application load balancers |Report only
+|`/datacenters/{datacenterId}/securitygroups` |Security groups |Report only
+|`/k8s/{k8sClusterId}/nodepools/{nodepoolId}/nodes` |Nodes in one node pool |Report only
+|`/datacenters/{datacenterId}/servers/{serverId}/volumes` |Server-to-volume attachments |Report only
+|`/datacenters/{datacenterId}/servers/{serverId}/cdroms` |Server-to-image attachments |Report only
+|`/datacenters/{datacenterId}/servers/{serverId}/nics` |Server network interfaces |Report only
+|`/datacenters/{datacenterId}/servers/{serverId}/gpus` |GPUs associated with the server |Report only
+|`/datacenters/{datacenterId}/loadbalancers/{loadbalancerId}/balancednics` |Classic balancer NIC memberships |Report only
+|`/datacenters/{datacenterId}/natgateways/{natGatewayId}/rules` |NAT rules |Report only
+|`/datacenters/{datacenterId}/natgateways/{natGatewayId}/flowlogs` |NAT flow logs |Report only
+|`/datacenters/{datacenterId}/networkloadbalancers/{networkLoadBalancerId}/forwardingrules` |Network balancer forwarding rules |Report only
+|`/datacenters/{datacenterId}/networkloadbalancers/{networkLoadBalancerId}/flowlogs` |Network balancer flow logs |Report only
+|`/datacenters/{datacenterId}/applicationloadbalancers/{applicationLoadBalancerId}/forwardingrules` |Application balancer forwarding rules |Report only
+|`/datacenters/{datacenterId}/applicationloadbalancers/{applicationLoadBalancerId}/flowlogs` |Application balancer flow logs |Report only
+|`/datacenters/{datacenterId}/securitygroups/{securityGroupId}/rules` |Security group rules |Report only
+|`/datacenters/{datacenterId}/servers/{serverId}/nics/{nicId}/firewallrules` |NIC firewall rules |Report only
+|`/datacenters/{datacenterId}/servers/{serverId}/nics/{nicId}/flowlogs` |NIC flow logs |Report only
+|===
+
+.apigateway
+[cols="5,3,2",options="header"]
+|===
+|GET path |Local observation |iTop destination
+|`/gateways` |API gateways |Report only
+|`/gateways/{apigatewayId}/routes` |Routes of one gateway |Report only
+|===
+
+.cdn
+[cols="5,3,2",options="header"]
+|===
+|GET path |Local observation |iTop destination
+|`/distributions` |CDN distributions |Report only
+|===
+
+.cert
+[cols="5,3,2",options="header"]
+|===
+|GET path |Local observation |iTop destination
+|`/certificates` |Certificates |Report only
+|`/auto-certificates` |Automatic certificates |Report only
+|`/providers` |Configured ACME providers (https://docs.ionos.com/cloud/security/certificate-manager/dcd-how-tos/view-acme-providers[IONOS provider list]) |Report only
+|===
+
+.containerregistry
+[cols="5,3,2",options="header"]
+|===
+|GET path |Local observation |iTop destination
+|`/registries` |Container registries |Report only
+|`/registries/{registryId}/repositories` |Repositories of one registry |Report only
+|`/registries/{registryId}/artifacts` |Artifacts in one registry |Report only
+|===
+
+.dbaas/inmemorydb (v2)
+[cols="5,3,2",options="header"]
+|===
+|GET path |Local observation |iTop destination
+|`/clusters` |In-memory clusters |Report only
+|`/snapshots` |Cluster snapshots |Report only
+|`/snapshot-locations` |Available snapshot locations (reference) |Report only
+|`/versions` |Supported versions (reference) |Report only
+|===
+
+.dbaas/mariadb (v2)
+[cols="5,3,2",options="header"]
+|===
+|GET path |Local observation |iTop destination
+|`/clusters` |MariaDB clusters |Report only
+|`/backups` |Database backups |Report only
+|`/backup-locations` |Available backup locations (reference) |Report only
+|`/versions` |Supported versions (reference) |Report only
+|===
+
+.dbaas/mongo (v2)
+[cols="5,3,2",options="header"]
+|===
+|GET path |Local observation |iTop destination
+|`/clusters` |MongoDB clusters |Report only
+|`/snapshots` |Cluster snapshots |Report only
+|`/instance-templates` |Instance templates (reference) |Report only
+|`/snapshot-locations` |Available snapshot locations (reference) |Report only
+|`/versions` |Supported versions (reference) |Report only
+|===
+
+.dbaas/psql (v2)
+[cols="5,3,2",options="header"]
+|===
+|GET path |Local observation |iTop destination
+|`/clusters` |PostgreSQL clusters |Report only
+|`/backups` |Database backups |Report only
+|`/backup-locations` |Available backup locations (reference) |Report only
+|`/versions` |Supported versions (reference) |Report only
+|===
+
+.dns
+[cols="5,3,2",options="header"]
+|===
+|GET path |Local observation |iTop destination
+|`/zones` |DNS zones |Report only
+|`/secondaryzones` |Secondary zones |Report only
+|`/reverserecords` |Reverse-record sets |Report only
+|`/zones/{zoneId}/records` |Records in a primary zone |Report only
+|`/secondaryzones/{secondaryZoneId}/records` |Records in a secondary zone |Report only
+|===
+
+.kafka
+[cols="5,3,2",options="header"]
+|===
+|GET path |Local observation |iTop destination
+|`/clusters` |Kafka clusters |Report only
+|`/clusters/{clusterId}/topics` |Topics of one cluster |Report only
+|===
+
+.logging
+[cols="5,3,2",options="header"]
+|===
+|GET path |Local observation |iTop destination
+|`/pipelines` |Logging pipelines |Report only
+|===
+
+.monitoring
+[cols="5,3,2",options="header"]
+|===
+|GET path |Local observation |iTop destination
+|`/pipelines` |Monitoring pipelines |Report only
+|===
+
+.nfs
+[cols="5,3,2",options="header"]
+|===
+|GET path |Local observation |iTop destination
+|`/clusters` |NFS clusters |Report only
+|`/clusters/{clusterId}/shares` |Shares of one cluster |Report only
+|===
+
+.objectstoragemanagement
+[cols="5,3,2",options="header"]
+|===
+|GET path |Local observation |iTop destination
+|`/regions` |Available Object Storage regions (reference) |Report only
+|===
+
+.vmautoscaling
+[cols="5,3,2",options="header"]
+|===
+|GET path |Local observation |iTop destination
+|`/groups` |Auto Scaling groups |Report only
+|`/groups/{groupId}/servers` |Group server membership |Report only
+|===
+
+.vpn
+[cols="5,3,2",options="header"]
+|===
+|GET path |Local observation |iTop destination
+|`/ipsecgateways` |IPsec gateways |VPN topology and optional IPAM hosts
+|`/wireguardgateways` |WireGuard gateways |VPN topology and optional IPAM hosts
+|`/ipsecgateways/{gatewayId}/tunnels` |Tunnels of one IPsec gateway |Report only
+|`/wireguardgateways/{gatewayId}/peers` |Peers of one WireGuard gateway |Report only
+|===
+
+.ai
+[cols="5,3,2",options="header"]
+|===
+|GET path |Local observation |iTop destination
+|`/v1/models` |Available AI models (reference) |Report only
+|===
+
+.inmemorydb-v1
+[cols="5,3,2",options="header"]
+|===
+|GET path |Local observation |iTop destination
+|`/replicasets` |Replica sets |Report only
+|`/snapshots` |Snapshots |Report only
+|`/snapshots/{snapshotId}/restores` |Restores of one snapshot |Report only
+|===
+
+.mariadb-v1
+[cols="5,3,2",options="header"]
+|===
+|GET path |Local observation |iTop destination
+|`/backups` |Database backups |Report only
+|`/clusters` |MariaDB clusters |Report only
+|===
+
+.mongodb-v1
+[cols="5,3,2",options="header"]
+|===
+|GET path |Local observation |iTop destination
+|`/clusters` |MongoDB clusters |Report only
+|===
+
+.postgresql-v1
+[cols="5,3,2",options="header"]
+|===
+|GET path |Local observation |iTop destination
+|`/clusters` |PostgreSQL clusters |Report only
+|`/clusters/{clusterId}/backups` |Backups of one cluster |Report only
+|`/clusters/{clusterId}/databases` |Databases in one cluster |Report only
+|===
+
+.tracing
+[cols="5,3,2",options="header"]
+|===
+|GET path |Local observation |iTop destination
+|`/pipelines` |Tracing pipelines |Report only
+|===
