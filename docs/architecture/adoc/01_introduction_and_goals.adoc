@@ -45,7 +45,7 @@ See https://docs.arc42.org/section-1/[Introduction and Goals] in the arc42 docum
 ****
 endif::arc42help[]
 
-A CMDB operator opens a Cloud to see which LANs, gateways and load balancers belong to a customer's virtual datacenter.
+A CMDB operator opens a Cloud to see the virtual machines, LANs, gateways and load balancers in a customer's virtual datacenter.
 The collector can first report the resources its IONOS credential can see at the selected endpoints. Only resource families with an implemented mapping become iTop records.
 Use the <<cloud-class-index,class index>> for a destination or the <<collector-capabilities,capability index>> for an API collection. https://github.com/rudnerbjoern/iTop-br-ionos-cloud-collector/blob/fc97fb65ad334e506c1121193965fb27e16c4a60/docs/resource-catalog.md[Resource catalog]
 
