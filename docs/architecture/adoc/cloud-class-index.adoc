@@ -1,0 +1,50 @@
+[[cloud-class-index]]
+==== Cloud class index
+
+A declaration count includes each module's changes to an existing class. The core declares 13 IDs, including native `Cloud`; the IONOS module extends 12 of them (all except `CloudLan`). The bridge extends eight core IDs and adds one link. The union has *14 distinct IDs*: 13 on Bare, 14 with the bridge. IONOS fields supplement either installation. The bridge replaces the address representation during Setup.
+
+[cols="1,3",options="header"]
+|===
+|Runtime XML |Inspected revision
+|https://github.com/rudnerbjoern/iTop-br-cloud-datamodel/blob/4e055f70465ac9d6fa46d92792452238cd8413a1/br-cloud-datamodel/datamodel.br-cloud-datamodel.xml[Neutral model] and https://github.com/rudnerbjoern/iTop-br-cloud-datamodel/blob/4e055f70465ac9d6fa46d92792452238cd8413a1/br-cloud-datamodel-bridge-for-teemip/datamodel.br-cloud-datamodel-bridge-for-teemip.xml[optional bridge] |`4e055f70465ac9d6fa46d92792452238cd8413a1`
+|https://github.com/rudnerbjoern/iTop-br-ionos-cloud-datamodel/blob/508db9638842a824ef46f1d75b00fcb23f281744/br-ionos-cloud-datamodel/datamodel.br-ionos-cloud-datamodel.xml[IONOS extension] |`508db9638842a824ef46f1d75b00fcb23f281744`
+|https://github.com/rudnerbjoern/iTop-br-ionos-cloud-collector/tree/34b9dc6ff8906b6e14bc38fef1ae363cb86f4e4e/collectors[Collector mappings] |`34b9dc6ff8906b6e14bc38fef1ae363cb86f4e4e`
+|===
+
+Read the XML path `/itop_design/classes/class/@id` in each linked module to reproduce the counts. In the table, *owned* denotes an IONOS `ionos_source_key` on a REST-managed row. *Host* denotes the identity component `address` on Bare or the required TeemIP IPAddress key `ipaddress_id` on Bridge. Each such row also has the IONOS field `ionos_synced_ip_id` to recognize manual redirection. The prefix, when present, is mutable. See <<inventory-ownership,withdrawal and manual ownership>>.
+
+[cols="2,1,4",options="header"]
+|===
+|Class ID |Parent |Purpose, identity and collector use
+|Cloud |VirtualHost |Native virtual host extended with an optional provider resource ID and lists of LANs, NAT gateways, VPN gateways and load balancers. The VDC source matches provider organization + VDC UUID and writes name, customer, provider, location and IONOS access protection. Bridge adds `ip_objects_list`.
+|CloudLan |FunctionalCI |A public or private network in one Cloud. The LAN source matches `cloud_id` + local `provider_resource_id`, sets name, customer organization and public flag. The same LAN number can occur in another VDC.
+|CloudNatGateway |FunctionalCI |An owned NAT gateway belongs to one Cloud. NAT matches Cloud + provider resource ID, updates name and organization, and traverses its LAN and public-host lists.
+|CloudNatGatewayLan |cmdbAbstractObject |Owned attachment of a NAT gateway to a Cloud LAN. NAT resolves the LAN within the gateway's VDC and matches `nat_gateway_id` + `cloud_lan_id`; the attachment owns the private address list.
+|CloudNatGatewayLanAddress |cmdbAbstractObject |Owned private gateway host on that attachment. NAT matches `attachment_id` + host and stores the reported prefix length.
+|CloudNatGatewayPublicAddress |cmdbAbstractObject |Owned public host assigned to the gateway. NAT matches `nat_gateway_id` + host.
+|CloudVpnGateway |FunctionalCI |Owned IPsec or WireGuard gateway in one Cloud. VPN matches organization + `source_namespace` + provider resource ID. The namespace includes customer, provider, optional contract, region and protocol. Writes protocol, IKE version or listen port and IONOS region, tier and status. Bridge replaces `public_endpoint` with the IPv4Address key `public_endpoint_id`; IONOS remembers the imported key in `ionos_synced_ip_id`.
+|CloudVpnGatewayLan |cmdbAbstractObject |Owned VPN connection to a LAN. VPN matches `vpn_gateway_id` + `cloud_lan_id` and places its reported hosts under that attachment. All connections must resolve in one observed VDC.
+|CloudVpnGatewayLanAddress |cmdbAbstractObject |Owned VPN LAN-side IPv4 or IPv6 host. VPN matches `attachment_id` + host and updates the reported prefix.
+|CloudVpnGatewayInterfaceAddress |cmdbAbstractObject |Owned WireGuard interface host. VPN matches `vpn_gateway_id` + host and stores its prefix independently of the LAN connections.
+|CloudNetworkLoadBalancer |FunctionalCI |Owned load balancer identified by Cloud + provider resource ID. The NLB writer resolves `listener_lan_id` and `backend_lan_id` in that Cloud and maintains distinct host lists.
+|CloudNetworkLoadBalancerListenerAddress |cmdbAbstractObject |Owned frontend host from the listener IP list. NLB matches `load_balancer_id` + host. The listener LAN's visibility determines the IPAM lookup scope.
+|CloudNetworkLoadBalancerBackendAddress |cmdbAbstractObject |Owned host used by the balancer on its backend LAN. NLB matches `load_balancer_id` + host and records the reported prefix. Forwarding targets are separate report observations.
+|lnkCloudToIPObject |cmdbAbstractObject |Bridge-only association, unique per `cloud_id` + `ipobject_id`. The Cloud selector accepts blocks and subnets. The VDC writer uses individual links for the reported IPv6 allocation; `source_key` identifies the importer and is empty for manual links. See <<allocation-flow,allocation changes>>.
+|===
+
+[[cloud-dependencies]]
+==== Native dependencies used by the model and writers
+
+[cols="2,4,1",options="header"]
+|===
+|Class IDs |Role |Source
+|Cloud, VirtualHost, VirtualMachine, ContainerHost |The virtualization module defines Cloud's parent and inherited VirtualMachine membership. Container Management adds the Cloud’s container-host list. |https://github.com/Combodo/iTop/blob/3.3.0/datamodels/2.x/itop-virtualization-mgmt/datamodel.itop-virtualization-mgmt.xml[Virtualization] · https://github.com/Combodo/iTop/blob/3.3.0/datamodels/2.x/itop-container-mgmt/datamodel.itop-container-mgmt.xml[Containers]
+|FunctionalCI, Location |LANs, gateways and load balancers inherit CI attributes. VDC mapping matches a provider-owned location by exact name. |https://github.com/Combodo/iTop/blob/3.3.0/datamodels/2.x/itop-config-mgmt/datamodel.itop-config-mgmt.xml[Configuration model]
+|Organization |VDC mapping resolves the configured customer and provider. IPAM queries use the customer organization. |https://github.com/Combodo/iTop/blob/3.3.0/datamodels/2.x/itop-structure/datamodel.itop-structure.xml[Organization model]
+|cmdbAbstractObject |Base for attachments, host assignments and the Cloud-to-IP-object link. |https://github.com/Combodo/iTop/blob/3.3.0/application/cmdbabstract.class.inc.php[iTop object base]
+|ModuleInstallation |Current installation records identify required model versions and optional bridge and IPv6 capabilities. |https://github.com/Combodo/iTop/blob/3.3.0/setup/moduleinstallation/moduleinstallation.class.inc.php[Installation model]
+|SynchroDataSource, SynchroAttribute, SynchroAttExtKey |Base configures the Cloud and LAN sources, their managed attributes and external keys. |https://github.com/Combodo/iTop/blob/3.3.0/synchro/synchrodatasource.class.inc.php[Synchronization model]
+|IPObject, IPBlock, IPSubnet, IPv4Block, IPv4Subnet |The bridge links existing blocks or subnets through IPObject. Private-host resolution checks a linked subnet or its parent block. |https://github.com/TeemIP/teemip-core-ip-mgmt/blob/3.3.1/teemip-ip-mgmt/datamodel.teemip-ip-mgmt.xml[TeemIP IP Management]
+|IPAddress, IPv4Address |Bridge assignments reference an address in the owning organization. IPv4 host resolution reuses a match or creates a host in a unique containing subnet. |https://github.com/TeemIP/teemip-core-ip-mgmt/blob/3.3.1/teemip-ip-mgmt/datamodel.teemip-ip-mgmt.xml[Address classes]
+|IPv6Block, IPv6Subnet, IPv6Address |With IPv6 Management, VDC allocation resolves an existing block. Host resolution uses IPv6 subnets and addresses. |https://github.com/TeemIP/teemip-core-ip-mgmt/blob/3.3.1/teemip-ipv6-mgmt/datamodel.teemip-ipv6-mgmt.xml[IPv6 Management]
+|===

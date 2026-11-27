@@ -1,0 +1,38 @@
+[[collector-modes]]
+==== Entry points and report outputs
+
+[cols="2,4",options="header"]
+|===
+|Invocation |What happens
+|`php scripts/inventory.php` |Loads distributed IONOS parameters, then local overrides. Reads the selected inventory and saves both reports. Exit 0 means complete, 2 means a saved partial report, 1 means configuration, execution or persistence failed.
+|`php exec.php --collect_only` |Registers the shared inventory reader with Combodo Base. Saves the same two files and reports whether all selected scopes completed.
+|`php exec.php --configure_only` |Checks the target modules, organizations and connection; creates or updates the two native synchronization sources and their attribute policies. Skips the provider fetch and inventory writes.
+|`php exec.php` |Locks the shared staging directory, reads a fresh in-memory synchronization snapshot, validates required Compute scopes, stages Cloud/LAN rows and runs the enabled phases below. This mode uses the restricted synchronization plan.
+|`--dump_config_only`; `--synchro_only` |Configuration dumping returns before collector registration. Synchronization from previously staged data and combining collect-only with configure-only are rejected.
+|===
+
+The two inventory modes write a private `.tmp/inventory/<run>/` directory.
+`inventory.json` records the collection interval, selected products/bases, Compute contract context, plan hash and completeness. Each scope has its product, base, template, concrete parent path, status, page count and projected rows. Each row has its provider ID, allowlisted attributes and derived IP facts (source field, canonical address, family and optional prefix). `coverage.md` groups observation counts and status frequencies by product/template. A volume listed in a VDC and again in a server attachment contributes to both counts.
+https://github.com/rudnerbjoern/iTop-br-ionos-cloud-collector/blob/34b9dc6ff8906b6e14bc38fef1ae363cb86f4e4e/scripts/inventory.php[Standalone command] · https://github.com/rudnerbjoern/iTop-br-ionos-cloud-collector/blob/34b9dc6ff8906b6e14bc38fef1ae363cb86f4e4e/collectors/src/Run.php[Selection and persistence] · https://github.com/rudnerbjoern/iTop-br-ionos-cloud-collector/blob/34b9dc6ff8906b6e14bc38fef1ae363cb86f4e4e/collectors/src/Summary.php[Coverage aggregation] · https://github.com/rudnerbjoern/iTop-br-ionos-cloud-collector/blob/34b9dc6ff8906b6e14bc38fef1ae363cb86f4e4e/tests/base-integration.php[Base collection fixture] · https://github.com/rudnerbjoern/iTop-br-ionos-cloud-collector/blob/34b9dc6ff8906b6e14bc38fef1ae363cb86f4e4e/tests/vdc-sync.php[Configuration and synchronization fixture]
+
+[[sync-phases]]
+==== Synchronization phases
+
+`collectors_launch_sequence` supplies the name, enable flag and rank. The table follows the distributed configuration. Disabled or inapplicable phases perform no writes. The plan rejects duplicate registrations and enabled phases ordered before a required predecessor. Required core and IONOS modules must both be present; the optional capabilities are read from the latest installation's module records.
+https://github.com/rudnerbjoern/iTop-br-ionos-cloud-collector/blob/34b9dc6ff8906b6e14bc38fef1ae363cb86f4e4e/collectors/params.distrib.xml[Configured ranks] · https://github.com/rudnerbjoern/iTop-br-ionos-cloud-collector/blob/34b9dc6ff8906b6e14bc38fef1ae363cb86f4e4e/collectors/src/IonosCollectionPlan.php[Registration and dependencies] · https://github.com/rudnerbjoern/iTop-br-ionos-cloud-collector/blob/34b9dc6ff8906b6e14bc38fef1ae363cb86f4e4e/collectors/main.php[Wiring of readers and writers]
+
+[cols="2,2,4",options="header"]
+|===
+|Rank and configured name |Prerequisites |Input, mapper and destination
+|1 · BRIonosVdcCollector |First |VdcSync maps the VDC UUID, name, exact provider location and configured organizations for the native Cloud source. Maps `secAuthProtection` true/false to `ionos_sec_auth_protection` yes/no, omitted or null to unknown. After successful Cloud sync, the optional <<allocation-flow,IPv6 link callback>> reconciles allocations.
+|2 · BRIonosLanCollector |VDC |LanSync maps each VDC-local LAN ID, name and public flag. LanCollector resolves the parent Cloud key for the native CloudLan source; a blank name becomes `LAN <ID>`.
+|7 · BRIonosNatIpv4Collector |VDC and bridge |NatSync prepares IPv4 hosts from NAT public and LAN-side observations. NatIpResolver reuses a customer IPv4Address or creates it in a unique matching subnet.
+|8 · BRIonosNatIpv6Collector |VDC, bridge and IPv6 Management |The same preparation selects IPv6 hosts and resolves or creates IPv6Address objects. A bridge without IPv6 Management cannot resolve an IPv6 host.
+|22 · BRIonosNatGatewayCollector |LAN and applicable NAT host phases |NatInventory maps each VDC's gateways, attachments and hosts. NatSync resolves LANs and writes the four NAT classes by REST, using the prepared host references on Bridge.
+|23 · BRIonosNlbCollector |LAN |NlbInventory maps both LAN roles and host lists. NlbSync resolves LANs and, on Bridge, hosts during this phase. REST writes the balancer and two assignment classes.
+|24 · BRIonosVpnCollector |LAN and selected VPN bases |VpnInventory maps each selected region/protocol list. VpnSync resolves placement and, on Bridge, hosts during this phase. REST writes the gateway, attachments, LAN hosts and WireGuard interface hosts. Configure-only can register this phase without running its writer.
+|===
+
+For both host-preparation phases, a private NAT host must belong to a subnet linked to the Cloud directly or through its parent block. A repeat import reuses the host. A denied NAT list stops the Compute import before either phase; withdrawing a NAT assignment leaves its TeemIP host in place. https://github.com/rudnerbjoern/iTop-br-ionos-cloud-collector/blob/34b9dc6ff8906b6e14bc38fef1ae363cb86f4e4e/collectors/src/NatIpResolver.php[Host resolver] · https://github.com/rudnerbjoern/iTop-br-ionos-cloud-collector/blob/34b9dc6ff8906b6e14bc38fef1ae363cb86f4e4e/tests/Unit/NatIpResolverTest.php[IPv4 and IPv6 host cases]
+
+The two host-preparation phases consume the NAT gateway observation. The IPv6 block association runs inside the VDC phase. This accounts for seven configured phases from four Compute path templates and two regional VPN gateway templates. See the <<collector-capabilities,full inventory plan>> for the other paths.
