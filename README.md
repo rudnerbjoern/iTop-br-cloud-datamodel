@@ -26,7 +26,7 @@ distinguish its own assignments from those maintained by other users or sources.
 ## Clouds and their LANs
 
 Open **Configuration management > Overview > Virtualization** to browse
-all Cloud LANs and Cloud NAT gateways.
+all Cloud LANs, Cloud NAT gateways and Cloud network load balancers.
 
 `Cloud.provider_resource_id` is the identifier assigned by the provider.
 The field is optional for manually maintained Clouds. Collectors must resolve

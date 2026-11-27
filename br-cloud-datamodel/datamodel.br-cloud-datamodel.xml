@@ -765,6 +765,10 @@ public function CheckLoadBalancerLans(Combodo\iTop\Service\Events\EventData $eve
                 <rank>10</rank>
                 <class>CloudNatGateway</class>
               </dashlet>
+              <dashlet id="CloudNetworkLoadBalancer" xsi:type="DashletBadge" _delta="define">
+                <rank>11</rank>
+                <class>CloudNetworkLoadBalancer</class>
+              </dashlet>
             </dashlets>
           </cell>
         </cells>

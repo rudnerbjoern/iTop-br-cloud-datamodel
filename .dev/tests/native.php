@@ -55,7 +55,7 @@ if ($bridgeMetadata['dependencies'] !== ["$name/$version", 'teemip-ip-mgmt/3.3.1
     throw new RuntimeException('Unexpected optional bridge registration.');
 }
 $base = simplexml_load_file("$root/$name/datamodel.$name.xml", SimpleXMLElement::class, LIBXML_NONET);
-foreach (['CloudLan', 'CloudNatGateway'] as $class) {
+foreach (['CloudLan', 'CloudNatGateway', 'CloudNetworkLoadBalancer'] as $class) {
     $badges = $base->xpath("menus/menu[@id='ConfigManagementOverview']/definition/cells/cell[@id='1']"
         . "/dashlets/dashlet[class='$class']");
     if (count($badges) !== 1 || (string) $badges[0]->attributes('xsi', true)->type !== 'DashletBadge') {
