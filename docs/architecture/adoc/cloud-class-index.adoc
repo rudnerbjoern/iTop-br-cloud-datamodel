@@ -8,7 +8,7 @@ A declaration count includes each module's changes to an existing class. The cor
 |Runtime XML |Inspected revision
 |https://github.com/rudnerbjoern/iTop-br-cloud-datamodel/blob/4e055f70465ac9d6fa46d92792452238cd8413a1/br-cloud-datamodel/datamodel.br-cloud-datamodel.xml[Neutral model] and https://github.com/rudnerbjoern/iTop-br-cloud-datamodel/blob/4e055f70465ac9d6fa46d92792452238cd8413a1/br-cloud-datamodel-bridge-for-teemip/datamodel.br-cloud-datamodel-bridge-for-teemip.xml[optional bridge] |`4e055f70465ac9d6fa46d92792452238cd8413a1`
 |https://github.com/rudnerbjoern/iTop-br-ionos-cloud-datamodel/blob/c1c9750c46eddd85234c255996aba89265c71dce/br-ionos-cloud-datamodel/datamodel.br-ionos-cloud-datamodel.xml[IONOS extension] |`c1c9750c46eddd85234c255996aba89265c71dce`
-|https://github.com/rudnerbjoern/iTop-br-ionos-cloud-collector/tree/34b9dc6ff8906b6e14bc38fef1ae363cb86f4e4e/collectors[Collector mappings] |`34b9dc6ff8906b6e14bc38fef1ae363cb86f4e4e`
+|https://github.com/rudnerbjoern/iTop-br-ionos-cloud-collector/tree/a20bf4e361aaa1519e8c63db88b80e329e923cbf/collectors[Collector mappings] |`a20bf4e361aaa1519e8c63db88b80e329e923cbf`
 |===
 
 Read the XML path `/itop_design/classes/class/@id` in each linked module to reproduce the counts. In the table, *owned* denotes an IONOS `ionos_source_key` on a REST-managed row. *Host* denotes the identity component `address` on Bare or the required TeemIP IPAddress key `ipaddress_id` on Bridge. Each such row also has the IONOS field `ionos_synced_ip_id` to recognize manual redirection. The prefix, when present, is mutable. See <<inventory-ownership,withdrawal and manual ownership>>.

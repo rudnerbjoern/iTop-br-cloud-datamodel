@@ -55,7 +55,7 @@ endif::arc42help[]
 . On the first observation the server has no matching provider identity. The collector checks the reservations and all incoming claims for that Cloud. A single eligible reservation gives the VM synchronization source an existing iTop ID. The source records the provider identity and updates the same CI. With no eligible reservation, the collector creates an identified VM and passes its ID to the same source.
 . Open the Cloud's *Virtual machines* list. The VM shows its IONOS server type and, for a server reporting four cores and 2048 MB, native CPU `4` and RAM `2048 MB`. After a source rename, the list shows the new name on the original CI. Its logical interface still points to that ID. A later observation that omits either metric preserves its stored value.
 
-If page two fails, page one cannot authorize an adoption or an update in that VDC. Other complete VDC lists can still be processed. The run reports the failed scope. A complete empty list leaves both reservations and previously imported VMs in place. https://github.com/rudnerbjoern/iTop-br-ionos-cloud-collector/blob/8681dd8def0da8649985cfc1c9f05b7a8b41ff3a/tests/vm-import.php[Installed-target VM scenarios]
+If page two fails, page one cannot authorize an adoption or an update in that VDC. Other complete VDC lists can still be processed. The run reports the failed scope. A complete empty list leaves both reservations and previously imported VMs in place. https://github.com/rudnerbjoern/iTop-br-ionos-cloud-collector/blob/a20bf4e361aaa1519e8c63db88b80e329e923cbf/tests/vm-import.php[Installed-target VM scenarios]
 
 [[vpn-repeat]]
 === Reorder connections, then replace one host

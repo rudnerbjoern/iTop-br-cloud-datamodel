@@ -119,7 +119,7 @@ include::cloud-class-index.adoc[]
 
 ==== IONOS model
 
-The add-on supplies optional provider and location samples. The collector resolves those records through the <<cloud-dependencies,native model>>.
+The add-on supplies the IONOS fields on the native VM details form and the optional provider and location samples. See the <<cloud-class-index,class index>> for the VM fields and <<cloud-dependencies,native dependencies>> for sample resolution.
 
 ==== IONOS collector
 
