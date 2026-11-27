@@ -87,4 +87,4 @@ endif::arc42help[]
 image::cloud-inventory-context.svg[IONOS supplies inventory to the collector. The collector synchronizes with iTop where operators also maintain records.]
 
 The collector pages through allowlisted IONOS HTTPS endpoints with a bearer token. Compute lists place resources inside VDCs, whereas the VPN service supplies regional lists and identifies the VDC in each connection.
-Combodo Base sends Cloud and LAN rows to iTop synchronization sources. The collector writes the dependent topology over the iTop REST interface. Operators browse and edit these records through the iTop UI.
+Combodo Base sends Cloud, LAN and VM rows to iTop synchronization sources. The collector uses iTop REST to resolve parents, locate VM reservations and write dependent topology. Operators can reserve a VM in a Cloud and later open that same CI from the Cloud's VM list after synchronization.

@@ -47,6 +47,16 @@ endif::arc42help[]
 . The VDC source writes the parent Cloud. The LAN source resolves its iTop key and writes LANs 2 and 3 inside that Cloud. In the default sequence optional IPAM phases prepare NAT hosts, then NAT, load balancer and VPN REST phases run. https://github.com/rudnerbjoern/iTop-br-ionos-cloud-collector/blob/fc97fb65ad334e506c1121193965fb27e16c4a60/collectors/src/IonosCollectionPlan.php[Phase dependencies]
 . For <<vpn-context,Fixture IPsec>> (`6b3f6803-be6e-4247-8431-1031ff09f688`), `VpnInventory` validates both connections against that VDC. `VpnSync` resolves the parent and its LANs, validates IPAM placement when enabled, and applies the <<vpn-blocks,endpoint mapping>> for `203.0.113.10`. The fixture finds the IPsec and WireGuard gateways under the first Cloud and zero under the second. See <<vpn-deployment,the endpoint in each installation>>. https://github.com/rudnerbjoern/iTop-br-ionos-cloud-collector/blob/fc97fb65ad334e506c1121193965fb27e16c4a60/tests/vpn-import.php#L99-L116[Installed-target placement and endpoint assertions]
 
+[[vm-reservation-flow]]
+=== From a reservation to a running server
+
+. An administrator reserves a native `VirtualMachine` in the customer's Cloud. A logical interface already references that CI. A second Cloud can have the same display name and a VM of the same name.
+. The collector reads every page of each VDC's server list. After Cloud synchronization, it resolves the provider's VDC ID to an iTop Cloud and verifies its customer. That Cloud supplies both the VM's host and its organization.
+. On the first observation the server has no matching provider identity. The collector checks the reservations and all incoming claims for that Cloud. A single eligible reservation gives the VM synchronization source an existing iTop ID. The source records the provider identity and updates the same CI. With no eligible reservation, the collector creates an identified VM and passes its ID to the same source.
+. Open the Cloud's *Virtual machines* list. The VM shows its IONOS server type and, for a server reporting four cores and 2048 MB, native CPU `4` and RAM `2048 MB`. After a source rename, the list shows the new name on the original CI. Its logical interface still points to that ID. A later observation that omits either metric preserves its stored value.
+
+If page two fails, page one cannot authorize an adoption or an update in that VDC. Other complete VDC lists can still be processed. The run reports the failed scope. A complete empty list leaves both reservations and previously imported VMs in place. https://github.com/rudnerbjoern/iTop-br-ionos-cloud-collector/blob/8681dd8def0da8649985cfc1c9f05b7a8b41ff3a/tests/vm-import.php[Installed-target VM scenarios]
+
 [[vpn-repeat]]
 === Reorder connections, then replace one host
 

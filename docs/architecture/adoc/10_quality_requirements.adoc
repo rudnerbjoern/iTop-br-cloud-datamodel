@@ -116,6 +116,8 @@ endif::arc42help[]
 [cols="2,3",options="header"]
 |===
 |Stimulus |What the operator can verify
+|A server appears beside a manual reservation, repeats and is renamed. |The original iTop key, logical interface link and Cloud remain. One native synchronization source owns the VM. Its scoped provider identity stays the same throughout the repeat and rename. <<vm-reservation-flow,Reservation adoption>>
+|Page two of a VDC's server list fails before or after adoption. |Before adoption the reservation remains unowned. After adoption its owner, identity and field values survive. A healthy VDC in the same run can still import its VMs.
 |A later page fails in one VPN list. |The log names the region, protocol and pages read. The process signals failure. Compare the retained IPsec name and updated WireGuard name in <<vpn-partial,the failed run>>.
 |An imported LAN address is replaced beside a manual assignment. |Look up the manual assignment by its original ID. Its prefix is still 25 and its owner is empty. With the bridge the shared host is still present. <<vpn-repeat,Replacement and manual ownership>>
 |Two connections change order, then the gateway is renamed. |Compare the before/after iTop keys in <<vpn-repeat,the repeat import>>. The gateway key survives the rename and the untouched LAN assignment keeps its key.

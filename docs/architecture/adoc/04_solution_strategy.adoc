@@ -34,6 +34,6 @@ See https://docs.arc42.org/section-4/[Solution Strategy] in the arc42 documentat
 endif::arc42help[]
 
 * *Share the topology.* Put the Cloud and its network resources in the neutral model so operators can navigate them without knowing the provider. The IONOS add-on owns provider-specific facts and provenance. The collector owns API selection, normalization and writes. See <<section-building-block-view,component responsibilities>>.
-* *Resolve parents first.* Use native synchronization sources for Clouds and LANs. Once their iTop keys exist, a REST writer can place each attachment and reconcile individual address assignments without replacing an operator's whole list.
+* *Resolve parents first.* Use native synchronization sources for Clouds, LANs and VMs. Once their iTop keys exist, a REST writer can place each attachment and reconcile individual address assignments without replacing an operator's whole list.
 * *Make authority explicit.* Match records by scoped provider IDs and mark rows created by each source. Check coverage before using absence to withdraw a row. <<section-concepts,Identity, ownership and completeness>> defines these rules.
 * *Keep IPAM optional.* Store hosts directly on a bare target. The bridge lets multiple assignments share a customer IPAM object, while the prefix reported on each assignment remains independent of the subnet mask.

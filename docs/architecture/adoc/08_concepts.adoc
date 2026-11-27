@@ -56,6 +56,8 @@ The <<cloud-class-index,class index>> gives the reconciliation key for each reco
 [[inventory-ownership]]
 === Ownership
 
+For a VM, the provider identity identifies the observed server and the iTop synchronization replica identifies its owner. A reservation is eligible only when both are absent. The fallback match requires the exact native class, name, parent Cloud and customer organization. Two eligible reservations for one server, or two as-yet unmatched servers claiming one reservation, leave every contested CI untouched. The <<vm-reservation-flow,reservation scenario>> shows when this rule applies.
+
 The VDC and LAN sources update the mapped inventory fields and disable updates to unmanaged fields. An imported Cloud retains its CMDB lifecycle and business criticality.
 For REST-managed topology, `ionos_source_key` identifies rows created by this source. A matching manual or foreign row keeps its ownership and fields. The collector can add its own children under a compatible parent. An unowned load balancer with conflicting LAN placement stops reconciliation. In bridge mode `ionos_synced_ip_id` remembers the last imported address key so a manual change of reference is detectable. A redirected assignment survives withdrawal. A manually redirected VPN endpoint also protects its gateway.
 On confirmed withdrawal the writer removes eligible source-owned assignments first. A remaining child protects its parent, and removing an assignment keeps the shared TeemIP host.
@@ -65,7 +67,7 @@ The independent `source_key` on a Cloud-to-block/subnet link serves the ownershi
 === Completeness
 
 Coverage belongs to a selected product, API base, collection and, for any nested list, concrete parent. A complete list with zero items is evidence of absence only in that scope. A denied or missing page is incomplete, even when earlier pages returned items.
-Incomplete required Compute coverage stops synchronization before the parent writers. The Cloud and LAN collectors skip the native write for a complete empty source; both native sources also configure deletion policy `ignore`. For NAT and load balancers, a complete child list can withdraw owned rows within its observed VDC; an unobserved VDC supplies no withdrawal evidence.
+Incomplete VDC, LAN, NAT or load balancer coverage stops synchronization before the parent writers. The Cloud and LAN collectors skip the native write for a complete empty source. Both native sources configure deletion policy `ignore`. For NAT and load balancers, a complete child list can withdraw owned rows within its observed VDC. Server coverage is evaluated per VDC as described in <<vm-reservation-flow,the reservation scenario>>.
 
 For VPN the withdrawal boundary is one selected *region and protocol* within the configured customer/provider/contract source.
 A failed page or invalid VDC/LAN reference prevents the writer from applying that list. Other complete regional protocol lists can reconcile. See <<vpn-partial,the partial import>>. https://github.com/rudnerbjoern/iTop-br-ionos-cloud-collector/blob/fc97fb65ad334e506c1121193965fb27e16c4a60/collectors/main.php#L117-L146[Compute coverage gate] · https://github.com/rudnerbjoern/iTop-br-ionos-cloud-collector/blob/fc97fb65ad334e506c1121193965fb27e16c4a60/collectors/src/VpnSync.php[VPN coverage gate]

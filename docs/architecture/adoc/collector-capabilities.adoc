@@ -1,9 +1,9 @@
 [[collector-capabilities]]
 ==== Collector capability index
 
-The index covers *23 product keys and 89 configured product/path pairs* at collector revision `34b9dc6ff8906b6e14bc38fef1ae363cb86f4e4e`. Each product heading is the literal selection key. Within a product, each GET path names the collection and any parent IDs. Regional bases instantiate the same template independently. The four `dbaas/` products use v2; the four `-v1` products have their own bases and resource sets. For a reproducible comparison, enumerate the plan with `jq -r 'to_entries[] as $p | $p.value.resources | keys[] | [$p.key, .] | @tsv' collectors/resources.json`. https://github.com/rudnerbjoern/iTop-br-ionos-cloud-collector/blob/34b9dc6ff8906b6e14bc38fef1ae363cb86f4e4e/collectors/resources.json[Executable plan and regional bases]
+The index covers *23 product keys and 89 configured product/path pairs* at collector revision `8681dd8def0da8649985cfc1c9f05b7a8b41ff3a`. Each product heading is the literal selection key. Within a product, each GET path names the collection and any parent IDs. Regional bases instantiate the same template independently. The four `dbaas/` products use v2; the four `-v1` products have their own bases and resource sets. For a reproducible comparison, enumerate the plan with `jq -r 'to_entries[] as $p | $p.value.resources | keys[] | [$p.key, .] | @tsv' collectors/resources.json`. https://github.com/rudnerbjoern/iTop-br-ionos-cloud-collector/blob/8681dd8def0da8649985cfc1c9f05b7a8b41ff3a/collectors/resources.json[Executable plan and regional bases]
 
-Every selected path contributes a coverage record and any projected rows to the local inventory. *Reference* marks provider offerings or supported values. The image list can mix provider and customer images. A row marked *Report only* has no iTop writer. For the six paths used by synchronization, the last column names the result; <<sync-phases,the phase table>> identifies the mapper and conditions. A database backup, a server's volume membership and a provider's available storage region therefore have different meanings even though all three produce report rows. https://github.com/rudnerbjoern/iTop-br-ionos-cloud-collector/blob/34b9dc6ff8906b6e14bc38fef1ae363cb86f4e4e/docs/resource-catalog.md[Product scopes and public API references]
+Every selected path contributes a coverage record and any projected rows to the local inventory. *Reference* marks provider offerings or supported values. The image list can mix provider and customer images. A row marked *Report only* has no iTop writer. For the paths used by synchronization, the last column names the result; <<sync-phases,the phase table>> identifies the mapper and conditions. A database backup, a server's volume membership and a provider's available storage region therefore have different meanings even though all three produce report rows. https://github.com/rudnerbjoern/iTop-br-ionos-cloud-collector/blob/34b9dc6ff8906b6e14bc38fef1ae363cb86f4e4e/docs/resource-catalog.md[Product scopes and public API references]
 
 
 .compute (Cloud API v6)
@@ -21,7 +21,7 @@ Every selected path contributes a coverage record and any projected rows to the 
 |`/k8s` |Kubernetes clusters |Report only
 |`/images` |Public catalog and private images (mixed) |Report only
 |`/k8s/{k8sClusterId}/nodepools` |Node pools in the cluster |Report only
-|`/datacenters/{datacenterId}/servers` |Servers in the VDC |Report only
+|`/datacenters/{datacenterId}/servers` |Servers in the VDC |Native VirtualMachine under its verified Cloud (<<vm-reservation-flow,reservation adoption>>)
 |`/datacenters/{datacenterId}/volumes` |Volumes in the VDC, including detached volumes |Report only
 |`/datacenters/{datacenterId}/lans` |LANs in the VDC |CloudLan
 |`/datacenters/{datacenterId}/loadbalancers` |Classic load balancers |Report only
