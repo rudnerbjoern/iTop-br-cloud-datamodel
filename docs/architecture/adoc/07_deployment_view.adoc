@@ -60,7 +60,23 @@ For multiple environments or alternative deployments please copy and adapt this 
 ****
 endif::arc42help[]
 
-The base and IONOS extension bundles are installed under the iTop installation's `extensions/` directory. iTop Setup selects the optional bridge when the required TeemIP modules are present. The external collector runs in its own PHP environment. It needs HTTPS access to IONOS for inventory collection and access to the target iTop instance for synchronization. https://github.com/rudnerbjoern/iTop-br-cloud-datamodel/blob/main/README.md[Model installation] · https://github.com/rudnerbjoern/iTop-br-ionos-cloud-collector/blob/main/README.md[Collector configuration]
+The collector host runs PHP and Combodo Base outside the web root. It reads IONOS over HTTPS and reaches the iTop target over HTTPS.
+Both model bundles live under the target's `extensions/` directory. iTop Setup builds their classes and forms into that installation. https://github.com/rudnerbjoern/iTop-br-cloud-datamodel/blob/efceb36d92a8e75393a02dff41758c5e2f9701df/README.md#installation[Model installation] · https://github.com/rudnerbjoern/iTop-br-ionos-cloud-collector/blob/fc97fb65ad334e506c1121193965fb27e16c4a60/README.md#combodo-data-collector-base[Collector deployment]
+
+[[vpn-deployment]]
+==== Where to find the endpoint in each installation
+
+On either target, open the parent Cloud's *VPN gateways* tab and select <<vpn-context,Fixture IPsec>> (`6b3f6803-be6e-4247-8431-1031ff09f688`).
+The <<vpn-blocks,model mapping>> determines what the <<vpn-runtime,initial import>> puts on the detail form.
+
+[cols="1,2,3",options="header"]
+|===
+|Target |Installed modules |Public endpoint on Fixture IPsec
+|Bare |Neutral core and IONOS add-on |`public_endpoint` holds the literal `203.0.113.10`. Operators can read it directly on the gateway.
+|Bridge |Same modules plus TeemIP IP Management and the auto-selected neutral bridge |`public_endpoint_id` links to the customer's `IPv4Address` for `203.0.113.10`. Opening the reference shows the shared address object.
+|===
+
+The integration fixture exercises these placements against disposable iTop targets. Private LAN and interface hosts need customer subnets linked to the Cloud directly or through their parent block. IPv6 hosts also require IPv6 Management. https://github.com/rudnerbjoern/iTop-br-ionos-cloud-collector/blob/fc97fb65ad334e506c1121193965fb27e16c4a60/tests/vpn-import.php#L18-L42[Fixture network preparation] · https://github.com/rudnerbjoern/iTop-br-ionos-cloud-collector/blob/fc97fb65ad334e506c1121193965fb27e16c4a60/tests/README.md#collector-checks[Installed-target checks]
 
 === Infrastructure Level 2
 
@@ -75,4 +91,6 @@ endif::arc42help[]
 
 ==== Collector runtime
 
-The PHP process uses the configured provider and iTop credentials for synchronization. Standalone inventory can run with access to the IONOS API alone.
+Configure the source token and selected products/regions on the collector host. Its inventory-only mode needs no iTop credentials.
+For synchronization, supply the existing organization IDs and an iTop service account allowed to administer the two sources and write the selected REST classes.
+Keep local parameters, staging CSVs and inventory reports private. `php exec.php --configure_only` configures the sources. The default run collects and synchronizes fresh observations. https://github.com/rudnerbjoern/iTop-br-ionos-cloud-collector/blob/fc97fb65ad334e506c1121193965fb27e16c4a60/README.md#itop-target-and-synchronization[Parameters and launch sequence]

@@ -45,7 +45,9 @@ See https://docs.arc42.org/section-1/[Introduction and Goals] in the arc42 docum
 ****
 endif::arc42help[]
 
-Import IONOS cloud inventory into iTop and keep resource relationships intact across repeated imports. IP address management is an optional integration.
+A CMDB operator opens a Cloud to see which LANs, gateways and load balancers belong to a customer's virtual datacenter.
+The collector can first report the resources its IONOS credential can see at the selected endpoints. Only resource families with an implemented mapping become iTop records.
+The <<section-building-block-view,building block view>> identifies their writers. https://github.com/rudnerbjoern/iTop-br-ionos-cloud-collector/blob/fc97fb65ad334e506c1121193965fb27e16c4a60/docs/resource-catalog.md[Resource catalog]
 
 === Quality Goals
 
@@ -73,7 +75,13 @@ A table with quality goals and concrete scenarios, ordered by priorities
 ****
 endif::arc42help[]
 
-Preserve resource identity across renames, distinguish incomplete API responses from empty inventories, and preserve manually maintained assignments. The quality scenarios in section 10 give observable examples.
+In priority order:
+
+. *Protect existing records.* A missing page must never be treated as evidence of withdrawal.
+. *Preserve manual work.* An operator's address assignment must survive a refresh of imported assignments.
+. *Keep identity stable.* Renames, reordered connections and provider IDs reused in different scopes must resolve to the intended iTop records.
+
+<<section-quality-scenarios,Quality scenarios>> gives the CMDB observations and run results for each goal.
 
 === Stakeholders
 
@@ -119,10 +127,11 @@ Not every project has all of these roles, and some will have additional ones.
 ****
 endif::arc42help[]
 
-[options="header",cols="1,2,2"]
+[cols="1,3",options="header"]
 |===
-|Role/Name|Contact|Expectations
-| CMDB operators | iTop operations team | Browse cloud records and retain manual assignments after an import.
-| Collector operators | Team running the IONOS collector | Identify incomplete API responses and investigate synchronization failures.
-| Model maintainers | Maintainers of the base and IONOS extensions | Keep identity contracts consistent across installation variants.
+|Stakeholder |What they need to know
+|IONOS account administrator |Which contract, regions and products the inventory credential can see for a customer.
+|CMDB and IPAM operators |Where to find a resource under its Cloud, who maintains each field and which manual links survive a refresh.
+|Collector operator |Which prerequisites to configure and how to identify a failed scope before retrying.
+|Model and collector maintainers |Where a resource's identity is defined and which mapper, writer and fixture depend on it.
 |===

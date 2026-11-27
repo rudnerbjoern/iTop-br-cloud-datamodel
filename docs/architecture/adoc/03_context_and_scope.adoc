@@ -51,7 +51,16 @@ The title of the table is the name of your system, the three columns contain the
 ****
 endif::arc42help[]
 
-IONOS supplies the observed inventory. CMDB operators can also maintain records and links directly in iTop.
+IONOS supplies resource identifiers, configuration and connections visible to the customer account.
+The CMDB team supplies the customer, provider and locations. With IPAM it also maintains the networks in which imported hosts can be placed.
+The collector operator receives coverage and error reports. The CMDB operator receives records grouped under the customer's Cloud and can add assignments there.
+
+[[vpn-context]]
+==== What the operator sees
+
+In the synthetic response to `GET /ipsecgateways` at the `de-txl` VPN service, one item is named `Fixture IPsec`, ID `6b3f6803-be6e-4247-8431-1031ff09f688`.
+Its `gatewayIP` is `203.0.113.10` and its two connections identify LANs 2 and 3 in one VDC. In iTop, open that Cloud's *VPN gateways* tab and select the gateway to see the public endpoint.
+Follow <<vpn-blocks,the field mapping>>, <<vpn-runtime,the first import>> and <<vpn-deployment,the two target forms>> for this observation. https://github.com/rudnerbjoern/iTop-br-ionos-cloud-collector/blob/fc97fb65ad334e506c1121193965fb27e16c4a60/tests/vpn-import.php#L42-L60[Provider response fixture]
 
 === Technical Context
 
@@ -73,4 +82,5 @@ endif::arc42help[]
 
 image::cloud-inventory-context.svg[IONOS supplies inventory to the collector. The collector synchronizes with iTop where operators also maintain records.]
 
-The collector reads the IONOS API. It uses synchronization sources for Clouds and LANs and the iTop REST API for the related network inventory.
+The collector pages through allowlisted IONOS HTTPS endpoints with a bearer token. Compute lists place resources inside VDCs, whereas the VPN service supplies regional lists and identifies the VDC in each connection.
+Combodo Base sends Cloud and LAN rows to iTop synchronization sources. The collector writes the dependent topology over the iTop REST interface. Operators browse and edit these records through the iTop UI.
